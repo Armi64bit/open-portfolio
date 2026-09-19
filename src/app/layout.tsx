@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Particles } from "@/components/Particles";
 import "./globals.css";
 import "./components.css";
 
@@ -56,6 +57,7 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
+          <Particles />
           <Navbar />
           <main>{children}</main>
           <Footer />
