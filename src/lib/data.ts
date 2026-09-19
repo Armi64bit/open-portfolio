@@ -335,6 +335,12 @@ export const clientLogos = [
 export const heroPortrait =
   "/images/framerusercontent.com/zxVxR2OQZ4gwb0Z5UtFvEnMLINQ-b82d477927.jpg";
 
+export const heroPortraitTrio = {
+  left: "/images/hero-look-left.jpg",
+  middle: "/images/hero-look-mid.jpg",
+  right: "/images/hero-look-right.jpg",
+};
+
 export const aboutPortrait =
   "/images/framerusercontent.com/9VzqeInK4U8O75RntX2C3nj4Da4-bb064258fe.jpg";
 

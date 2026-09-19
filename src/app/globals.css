@@ -3,6 +3,7 @@
    Bound from the original Framer site (recon computed values):
    --token #000 / #6e6e6e / #fff / #ccc / #e80000 / #77ff0080
      / #3cff00, Inter + Inter Display (self-hosted).
+   Accent switched to brand red (#e80000) per user request.
    Dark theme is a deliberate OKLch-derived variant for the CV.
    ============================================================ */
 
@@ -19,9 +20,9 @@
   --faint: #b9b9b9;
   --line: #e7e7e7;
   --line-strong: #000000;
-  --accent: #3cff00;
-  --accent-ink: #052000;
-  --accent-soft: rgba(119, 255, 0, 0.5);
+  --accent: #e80000;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(232, 0, 0, 0.4);
   --danger: #e80000;
   --chip: rgba(34, 34, 34, 0.85);
   --chip-ink: #ffffff;
@@ -43,9 +44,9 @@
   --faint: #5a5a5a;
   --line: #232323;
   --line-strong: #f2f2f2;
-  --accent: #3cff00;
-  --accent-ink: #031400;
-  --accent-soft: rgba(119, 255, 0, 0.32);
+  --accent: #e80000;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(232, 0, 0, 0.28);
   --danger: #e80000;
   --chip: rgba(255, 255, 255, 0.12);
   --chip-ink: #f2f2f2;
