@@ -1,0 +1,19 @@
+# deps
+node_modules/
+
+# next build output
+.next/
+out/
+
+# local preview screenshots / logs
+shots/
+serve.log
+build.log
+build.txt
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.local
+.idea/
+.vscode/

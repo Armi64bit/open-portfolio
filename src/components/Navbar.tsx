@@ -1,0 +1,115 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { ThemeToggle } from "./ThemeToggle";
+
+const NAV = [
+  { label: "Home", href: "/" },
+  { label: "Work", href: "/work" },
+  { label: "CV", href: "/cv" },
+  { label: "Contact", href: "/#contact" },
+];
+
+export function Navbar() {
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    if (href === "/#contact") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  return (
+    <header
+      className={`navbar${scrolled ? " navbar--scrolled" : ""}`}
+      data-od-id="navbar"
+    >
+      <div className="navbar__inner container">
+        <Link href="/" className="navbar__logo" data-od-id="navbar-logo">
+          BAHAA
+        </Link>
+
+        <nav className="navbar__links" aria-label="Primary">
+          {NAV.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`navbar__link${isActive(item.href) ? " is-active" : ""}`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="navbar__actions">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="navbar__burger"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span />
+            <span />
+            {open && <span className="burger-x" />}
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="navbar__overlay"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <nav className="navbar__mobile" aria-label="Mobile">
+              {NAV.map((item, i) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 * i, duration: 0.35 }}
+                >
+                  <Link href={item.href} className="navbar__mobile-link">
+                    <span className="navbar__mobile-idx">
+                      0{i + 1}
+                    </span>
+                    {item.label}
+                    <span className="arr">↗</span>
+                  </Link>
+                </motion.div>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
