@@ -18,10 +18,11 @@ type Look = keyof typeof heroPortraitTrio;
 const LOOK_ORDER: Look[] = ["left", "middle", "right"];
 
 /** Opacity of the straight-on frame given cursor position v in [-1, 1].
- *  The center keeps a wide default band; left/right frames fade in only as
- *  the cursor moves clearly toward the sides of the image. */
+ *  Zones are roughly thirds of the image: cursor clearly left -> left frame,
+ *  clearly right -> right frame, with a narrow center band and soft blends at
+ *  the boundaries. */
 function midOpacity(v: number) {
-  return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.4) / 0.3));
+  return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.22) / 0.28));
 }
 
 export function Hero() {
@@ -60,11 +61,11 @@ export function Hero() {
   const smooth = useSpring(pointer, { stiffness: 150, damping: 22, mass: 0.35 });
   const smoothY = useSpring(pointerY, { stiffness: 150, damping: 22, mass: 0.35 });
   const tiltY = useSpring(
-    useTransform(pointer, [-1, 1], reduce ? [0, 0] : [5, -5]),
+    useTransform(pointer, [-1, 1], [5, -5]),
     { stiffness: 130, damping: 18 },
   );
-  const visorX = useTransform(smooth, [-1, 1], reduce ? [0, 0] : [11, -11]);
-  const visorY = useTransform(smoothY, [-1, 1], reduce ? [0, 0] : [6, -6]);
+  const visorX = useTransform(smooth, [-1, 1], [15, -15]);
+  const visorY = useTransform(smoothY, [-1, 1], [9, -9]);
 
   const midOp = useTransform(smooth, (v) => midOpacity(v));
   const leftOp = useTransform(smooth, (v) => (v < 0 ? 1 - midOpacity(v) : 0));
