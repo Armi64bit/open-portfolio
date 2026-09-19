@@ -293,12 +293,11 @@
 
 .hover-lens {
   position: absolute;
-  width: 260px;
-  height: 260px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   background: var(--lens, #ffffff);
   mix-blend-mode: difference;
-  filter: blur(14px);
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 5;

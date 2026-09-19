@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import type { Project } from "@/lib/data";
 import { featuredProjects } from "@/lib/data";
 import { EASE, EASE_SPRING } from "@/lib/motion";
 import { Reveal } from "./Reveal";
+import { LensSection } from "./LensSection";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
@@ -73,43 +73,12 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
 }
 
 export function ProjectsSection() {
-  const reduce = useReducedMotion();
-  const host = useRef<HTMLElement>(null);
-  const [active, setActive] = useState(false);
-  const lensX = useMotionValue(0);
-  const lensY = useMotionValue(0);
-  const lensSX = useSpring(lensX, { stiffness: 130, damping: 20, mass: 0.5 });
-  const lensSY = useSpring(lensY, { stiffness: 130, damping: 20, mass: 0.5 });
-
-  function onMove(e: React.PointerEvent) {
-    if (!host.current) return;
-    const r = host.current.getBoundingClientRect();
-    lensX.set(e.clientX - r.left);
-    lensY.set(e.clientY - r.top);
-  }
-
   return (
-    <section
+    <LensSection
       className="section section--lens"
       id="projects"
       data-od-id="selected-projects"
-      ref={host}
-      onPointerMove={onMove}
-      onPointerEnter={() => setActive(true)}
-      onPointerLeave={() => setActive(false)}
     >
-      {!reduce && (
-        <motion.div
-          className="hover-lens"
-          aria-hidden="true"
-          style={{ left: lensSX, top: lensSY }}
-          animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.5 }}
-          transition={{
-            opacity: { duration: 0.3 },
-            scale: { type: "spring", stiffness: 260, damping: 24 },
-          }}
-        />
-      )}
       <div className="container">
         <div className="section__head">
           <Reveal>
@@ -138,7 +107,7 @@ export function ProjectsSection() {
           ))}
         </div>
       </div>
-    </section>
+    </LensSection>
   );
 }
 
