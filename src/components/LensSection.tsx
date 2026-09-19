@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, useState, type ReactNode } from "react";
 
 type LensSectionProps = {
@@ -24,7 +19,6 @@ export function LensSection({
   className,
   ...rest
 }: LensSectionProps) {
-  const reduce = useReducedMotion();
   const host = useRef<HTMLElement>(null);
   const [active, setActive] = useState(false);
   const x = useMotionValue(0);
@@ -48,18 +42,16 @@ export function LensSection({
       onPointerLeave={() => setActive(false)}
       {...rest}
     >
-      {!reduce && (
-        <motion.div
-          className="hover-lens"
-          aria-hidden="true"
-          style={{ left: sx, top: sy }}
-          animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.6 }}
-          transition={{
-            opacity: { duration: 0.22 },
-            scale: { type: "spring", stiffness: 320, damping: 24 },
-          }}
-        />
-      )}
+      <motion.div
+        className="hover-lens"
+        aria-hidden="true"
+        style={{ left: sx, top: sy }}
+        animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.6 }}
+        transition={{
+          opacity: { duration: 0.22 },
+          scale: { type: "spring", stiffness: 320, damping: 24 },
+        }}
+      />
       {children}
     </section>
   );

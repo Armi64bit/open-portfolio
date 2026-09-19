@@ -298,7 +298,7 @@
   border-radius: 50%;
   background: var(--lens, #ffffff);
   mix-blend-mode: difference;
-  transform: translate(-50%, -50%);
+  translate: -50% -50%;
   pointer-events: none;
   z-index: 5;
   will-change: left, top;
