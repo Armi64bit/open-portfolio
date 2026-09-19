@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -17,6 +17,13 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const { scrollYProgress } = useScroll();
+  const progressX = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 24,
+    mass: 0.24,
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -79,6 +86,12 @@ export function Navbar() {
           </button>
         </div>
       </div>
+
+      <motion.div
+        className="navbar__progress"
+        style={{ scaleX: progressX }}
+        data-od-id="scroll-progress"
+      />
 
       <AnimatePresence>
         {open && (

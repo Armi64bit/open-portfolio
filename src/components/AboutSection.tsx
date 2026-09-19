@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { aboutPortrait, clientLogos, services } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import { Magnetic } from "./Magnetic";
 
 export function AboutSection() {
   return (
@@ -24,17 +26,26 @@ export function AboutSection() {
               </p>
             </Reveal>
             <Reveal delay={0.08}>
-              <Link href="/cv" className="link" data-od-id="view-resume">
-                View Résumé
-                <span className="arr" aria-hidden="true">
-                  ↗
-                </span>
-              </Link>
+              <Magnetic>
+                <Link href="/cv" className="link" data-od-id="view-resume">
+                  View Résumé
+                  <span className="arr" aria-hidden="true">
+                    ↗
+                  </span>
+                </Link>
+              </Magnetic>
             </Reveal>
           </div>
 
           <Reveal delay={0.12}>
-            <div className="about__portrait">
+            <motion.div
+              className="about__portrait"
+              initial={{ clipPath: "inset(0 0 100% 0)" }}
+              whileInView={{ clipPath: "inset(0 0 0% 0)" }}
+              viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+              transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ scale: 1.015 }}
+            >
               <img
                 src={aboutPortrait}
                 alt="Working portrait of Bahaa Eddine Bouzid"
@@ -42,7 +53,7 @@ export function AboutSection() {
                 width={823}
                 height={1132}
               />
-            </div>
+            </motion.div>
           </Reveal>
         </div>
 

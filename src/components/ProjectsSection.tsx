@@ -4,48 +4,68 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Project } from "@/lib/data";
 import { featuredProjects } from "@/lib/data";
+import { EASE, EASE_SPRING } from "@/lib/motion";
 import { Reveal } from "./Reveal";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
-    <Reveal delay={index * 0.1}>
-      <Link
-        href={`/work/${project.slug}`}
-        className="pcard"
-        data-od-id={`project-${project.slug}`}
+    <Reveal delay={index * 0.08}>
+      <motion.div
+        whileHover={{ y: -8 }}
+        transition={EASE_SPRING}
+        className="pcard__lift"
       >
-        <div className="pcard__media" style={{ aspectRatio: project.imageRatio }}>
-          <img
-            src={project.image}
-            alt={project.imageAlt}
-            loading="lazy"
-            width={1200}
-            height={800}
-            className="pcard__img"
-          />
-          <span className="pcard__zoom" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M7 17 17 7M17 7v8m0-8H9"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-        </div>
-        <div className="pcard__meta text-muted">
-          <span>{project.category}</span>
-          <span className="pcard__year">{project.year}</span>
-        </div>
-        <div className="pcard__row">
-          <h3 className="pcard__title display">{project.title}</h3>
-          <span className="arr" aria-hidden="true">
-            ↗
-          </span>
-        </div>
-      </Link>
+        <Link
+          href={`/work/${project.slug}`}
+          className="pcard"
+          data-od-id={`project-${project.slug}`}
+        >
+          <div className="pcard__media" style={{ aspectRatio: project.imageRatio }}>
+            <img
+              src={project.image}
+              alt={project.imageAlt}
+              loading="lazy"
+              width={1200}
+              height={800}
+              className="pcard__img"
+            />
+            <span className="pcard__sweep" aria-hidden="true" />
+            <span className="pcard__view" aria-hidden="true">
+              View project
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M7 17 17 7M17 7v8m0-8H9"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+            <span className="pcard__zoom" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M7 17 17 7M17 7v8m0-8H9"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </div>
+          <div className="pcard__meta text-muted">
+            <span>{project.category}</span>
+            <span className="pcard__year">{project.year}</span>
+          </div>
+          <div className="pcard__row">
+            <h3 className="pcard__title display">{project.title}</h3>
+            <span className="arr" aria-hidden="true">
+              ↗
+            </span>
+          </div>
+        </Link>
+      </motion.div>
     </Reveal>
   );
 }
@@ -95,16 +115,19 @@ export function ProjectHeroImage({
   return (
     <motion.div
       className="phero"
-      style={{ aspectRatio: project.imageRatio }}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      style={{ aspectRatio: project.imageRatio, perspective: 1000 }}
+      initial={{ opacity: 0, scale: 0.96, y: 28, rotateX: 4 }}
+      animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
+      transition={{ duration: 0.95, ease: EASE }}
     >
-      <img
+      <motion.img
         src={project.image}
         alt={project.imageAlt}
         loading={priority ? "eager" : "lazy"}
         className="phero__img"
+        initial={{ scale: 1.12 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.4, ease: EASE, delay: 0.15 }}
       />
     </motion.div>
   );

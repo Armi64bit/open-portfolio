@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Reveal } from "./Reveal";
+import { Magnetic } from "./Magnetic";
 
 export function ContactSection() {
   const [name, setName] = useState("");
@@ -88,12 +89,14 @@ export function ContactSection() {
                 />
               </div>
               <div className="contact__actions">
-                <button type="submit" className="btn btn--solid" data-od-id="send-message">
-                  Send Message
-                  <span className="ico" aria-hidden="true">
-                    ↗
-                  </span>
-                </button>
+                <Magnetic strength={0.25}>
+                  <button type="submit" className="btn btn--solid" data-od-id="send-message">
+                    Send Message
+                    <span className="ico" aria-hidden="true">
+                      ↗
+                    </span>
+                  </button>
+                </Magnetic>
                 <span className="text-muted contact__hint">
                   Opens your mail client with the message prefilled.
                 </span>
