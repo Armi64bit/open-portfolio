@@ -24,6 +24,7 @@ function midOpacity(v: number) {
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const visorRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
@@ -46,8 +47,10 @@ export function Hero() {
     [1, reduce ? 1 : 0],
   );
 
-  // cursor-follow portrait: normalized pointer position across the hero is
-  // -1 (left) .. 1 (right). The three frames crossfade in a continuous,
+  // cursor-follow portrait: -1 (left) .. 1 (right) is measured against the
+  // portrait's own box, so hovering the left side of the image shows the
+  // left-looking frame, the right side the right-looking frame, and the
+  // center the straight-on frame. The three frames crossfade in a continuous,
   // partition-of-unity blend so the portrait appears to turn toward the
   // cursor; the portrait itself tilts subtly in the same direction.
   const pointer = useMotionValue(0);
@@ -63,9 +66,8 @@ export function Hero() {
   const rightOp = useTransform(smooth, (v) => (v > 0 ? 1 - midOpacity(v) : 0));
 
   function onPointerMove(e: React.PointerEvent) {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    if (!rect.width) return;
+    const rect = visorRef.current?.getBoundingClientRect();
+    if (!rect || !rect.width) return;
     const rel = (e.clientX - rect.left) / rect.width;
     pointer.set(Math.max(-1, Math.min(1, (rel - 0.5) * 2)));
   }
@@ -77,14 +79,7 @@ export function Hero() {
   const word = "BAHAA";
 
   return (
-    <section
-      className="hero"
-      ref={ref}
-      id="home"
-      data-od-id="hero"
-      onPointerMove={onPointerMove}
-      onPointerLeave={onPointerLeave}
-    >
+    <section className="hero" ref={ref} id="home" data-od-id="hero">
       <div className="container" style={{ perspective: 1200 }}>
         <motion.h1
           className="display display--hero hero__title"
@@ -166,7 +161,10 @@ export function Hero() {
               <motion.div
                 className="hero__visor"
                 data-od-id="hero-portrait-looks"
+                ref={visorRef}
                 style={{ x: visorX }}
+                onPointerMove={onPointerMove}
+                onPointerLeave={onPointerLeave}
               >
                 {LOOK_ORDER.map((k) => {
                   const op = k === "left" ? leftOp : k === "right" ? rightOp : midOp;
