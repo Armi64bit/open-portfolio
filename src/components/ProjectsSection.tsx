@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import type { Project } from "@/lib/data";
 import { EASE, EASE_SPRING } from "@/lib/motion";
 import { Reveal } from "./Reveal";
-import { LensSection } from "./LensSection";
 import { RingCarousel } from "./RingCarousel";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
@@ -74,11 +73,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
 
 export function ProjectsSection() {
   return (
-    <LensSection
-      className="section section--lens"
-      id="projects"
-      data-od-id="selected-projects"
-    >
+    <section className="section" id="projects" data-od-id="selected-projects">
       <div className="container">
         <div className="section__head">
           <Reveal>
@@ -103,7 +98,7 @@ export function ProjectsSection() {
 
         <RingCarousel />
       </div>
-    </LensSection>
+    </section>
   );
 }
 

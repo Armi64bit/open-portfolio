@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { projects } from "@/lib/data";
 import { Reveal } from "@/components/Reveal";
-import { LensSection } from "@/components/LensSection";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -12,10 +11,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <LensSection
-      className="section section--page section--lens"
-      data-od-id="work"
-    >
+    <section className="section section--page" data-od-id="work">
       <div className="container">
         <Reveal>
           <span className="kicker">Portfolio</span>
@@ -66,6 +62,6 @@ export default function WorkPage() {
           ))}
         </ul>
       </div>
-    </LensSection>
+    </section>
   );
 }

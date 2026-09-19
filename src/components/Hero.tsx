@@ -8,14 +8,25 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useEffect, useRef } from "react";
-import { heroPortraitTrio } from "@/lib/data";
+import { useEffect, useRef, useState } from "react";
+import { projects, heroPortraitTrio } from "@/lib/data";
 import { EASE } from "@/lib/motion";
 import { Magnetic } from "./Magnetic";
 
 type Look = keyof typeof heroPortraitTrio;
 
 const LOOK_ORDER: Look[] = ["left", "middle", "right"];
+
+type TrailItem = {
+  id: number;
+  src: string;
+  x: number;
+  y: number;
+  rot: number;
+  scale: number;
+};
+
+const TRAIL_MAX = 14;
 
 /** Opacity of the straight-on frame given cursor position v in [-1, 1]
  *  across the viewport. Left third -> left frame, right third -> right frame,
@@ -68,6 +79,48 @@ export function Hero() {
   const leftOp = useTransform(smooth, (v) => (v < 0 ? 1 - midOpacity(v) : 0));
   const rightOp = useTransform(smooth, (v) => (v > 0 ? 1 - midOpacity(v) : 0));
 
+  // Hero-only inversion lens.
+  const [lensOn, setLensOn] = useState(false);
+  const lensX = useMotionValue(0);
+  const lensY = useMotionValue(0);
+  const lensSX = useSpring(lensX, { stiffness: 240, damping: 24, mass: 0.35 });
+  const lensSY = useSpring(lensY, { stiffness: 240, damping: 24, mass: 0.35 });
+
+  // Fading trail of project thumbnails following the cursor inside the hero.
+  const [trail, setTrail] = useState<TrailItem[]>([]);
+  const spawn = useRef({ lastX: -9999, lastY: -9999, lastT: 0, nextId: 0 });
+
+  function spawnTrail(clientX: number, clientY: number) {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    const s = spawn.current;
+    const x = clientX - r.left;
+    const y = clientY - r.top;
+    const now = performance.now();
+    if (Math.hypot(x - s.lastX, y - s.lastY) < 16 || now - s.lastT < 40) return;
+    s.lastX = x;
+    s.lastY = y;
+    s.lastT = now;
+    const src = projects[s.nextId % projects.length].image;
+    const item: TrailItem = {
+      id: s.nextId++,
+      src,
+      x,
+      y,
+      rot: (Math.random() - 0.5) * 44,
+      scale: 0.9 + Math.random() * 0.25,
+    };
+    setTrail((prev) => [...prev.slice(-(TRAIL_MAX - 1)), item]);
+  }
+
+  function onSectionMove(e: React.PointerEvent<HTMLElement>) {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    lensX.set(e.clientX - r.left);
+    lensY.set(e.clientY - r.top);
+    spawnTrail(e.clientX, e.clientY);
+  }
+
   useEffect(() => {
     function onMove(e: PointerEvent) {
       const nx = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -90,7 +143,15 @@ export function Hero() {
   const word = "BAHAA";
 
   return (
-    <section className="hero" ref={ref} id="home" data-od-id="hero">
+    <section
+      className="hero"
+      ref={ref}
+      id="home"
+      data-od-id="hero"
+      onPointerMove={onSectionMove}
+      onPointerEnter={() => setLensOn(true)}
+      onPointerLeave={() => setLensOn(false)}
+    >
       <div className="container" style={{ perspective: 1200 }}>
         <motion.h1
           className="display display--hero hero__title"
@@ -204,6 +265,35 @@ export function Hero() {
           </motion.div>
         </div>
       </div>
+
+      <div className="hero__trail" aria-hidden="true">
+        {trail.map((t) => (
+          <motion.div
+            key={t.id}
+            className="hero__trail-item"
+            style={{ left: t.x, top: t.y }}
+            initial={{ opacity: 0.9, scale: t.scale, rotate: t.rot, y: 0 }}
+            animate={{ opacity: 0, scale: t.scale * 0.55, rotate: t.rot - 12, y: 34 }}
+            transition={{ duration: 0.8, ease: EASE }}
+            onAnimationComplete={() =>
+              setTrail((prev) => prev.filter((p) => p.id !== t.id))
+            }
+          >
+            <img src={t.src} alt="" />
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        className="hover-lens"
+        aria-hidden="true"
+        style={{ left: lensSX, top: lensSY }}
+        animate={{ opacity: lensOn ? 1 : 0, scale: lensOn ? 1 : 0.6 }}
+        transition={{
+          opacity: { duration: 0.22 },
+          scale: { type: "spring", stiffness: 320, damping: 24 },
+        }}
+      />
     </section>
   );
 }
