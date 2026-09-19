@@ -17,9 +17,11 @@ type Look = keyof typeof heroPortraitTrio;
 
 const LOOK_ORDER: Look[] = ["left", "middle", "right"];
 
-/** Opacity of the straight-on frame given cursor position v in [-1, 1]. */
+/** Opacity of the straight-on frame given cursor position v in [-1, 1].
+ *  The center keeps a wide default band; left/right frames fade in only as
+ *  the cursor moves clearly toward the sides of the image. */
 function midOpacity(v: number) {
-  return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.17) / 0.16));
+  return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.4) / 0.3));
 }
 
 export function Hero() {
@@ -47,19 +49,22 @@ export function Hero() {
     [1, reduce ? 1 : 0],
   );
 
-  // cursor-follow portrait: -1 (left) .. 1 (right) is measured against the
-  // portrait's own box, so hovering the left side of the image shows the
-  // left-looking frame, the right side the right-looking frame, and the
-  // center the straight-on frame. The three frames crossfade in a continuous,
-  // partition-of-unity blend so the portrait appears to turn toward the
-  // cursor; the portrait itself tilts subtly in the same direction.
+  // cursor-follow portrait: hover position is measured against the portrait's
+  // own box. Left of the image -> left-looking frame, right -> right-looking
+  // frame, wide center -> straight-on frame, and hovering the top/bottom edge
+  // of the frame (or leaving it) returns to the straight-on frame. The frames
+  // crossfade continuously and the portrait itself drifts and tilts slightly
+  // toward the cursor.
   const pointer = useMotionValue(0);
+  const pointerY = useMotionValue(0);
   const smooth = useSpring(pointer, { stiffness: 150, damping: 22, mass: 0.35 });
+  const smoothY = useSpring(pointerY, { stiffness: 150, damping: 22, mass: 0.35 });
   const tiltY = useSpring(
     useTransform(pointer, [-1, 1], reduce ? [0, 0] : [5, -5]),
     { stiffness: 130, damping: 18 },
   );
-  const visorX = useTransform(smooth, [-1, 1], reduce ? [0, 0] : [8, -8]);
+  const visorX = useTransform(smooth, [-1, 1], reduce ? [0, 0] : [11, -11]);
+  const visorY = useTransform(smoothY, [-1, 1], reduce ? [0, 0] : [6, -6]);
 
   const midOp = useTransform(smooth, (v) => midOpacity(v));
   const leftOp = useTransform(smooth, (v) => (v < 0 ? 1 - midOpacity(v) : 0));
@@ -67,13 +72,21 @@ export function Hero() {
 
   function onPointerMove(e: React.PointerEvent) {
     const rect = visorRef.current?.getBoundingClientRect();
-    if (!rect || !rect.width) return;
-    const rel = (e.clientX - rect.left) / rect.width;
-    pointer.set(Math.max(-1, Math.min(1, (rel - 0.5) * 2)));
+    if (!rect || !rect.width || !rect.height) return;
+    const relX = (e.clientX - rect.left) / rect.width;
+    const relY = (e.clientY - rect.top) / rect.height;
+    if (relY < 0.08 || relY > 0.92) {
+      pointer.set(0);
+      pointerY.set(0);
+      return;
+    }
+    pointer.set(Math.max(-1, Math.min(1, (relX - 0.5) * 2)));
+    pointerY.set(Math.max(-1, Math.min(1, (relY - 0.5) * 2)));
   }
 
   function onPointerLeave() {
     pointer.set(0);
+    pointerY.set(0);
   }
 
   const word = "BAHAA";
@@ -162,7 +175,7 @@ export function Hero() {
                 className="hero__visor"
                 data-od-id="hero-portrait-looks"
                 ref={visorRef}
-                style={{ x: visorX }}
+                style={{ x: visorX, y: visorY }}
                 onPointerMove={onPointerMove}
                 onPointerLeave={onPointerLeave}
               >
