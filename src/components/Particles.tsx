@@ -21,6 +21,8 @@ type Particle = {
 const LINK_DIST = 88;
 const CURSOR_R = 92;
 const PUSH = 170;
+const HERO_HERO_DIV = 17000; // particles per px^2 in the hero zone
+const REST_DIV = 8500; // ~2x denser everywhere below the hero
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
@@ -65,28 +67,49 @@ export function Particles() {
       }
     }
 
+    function makeParticle() {
+      const rise = Math.random() < 0.24;
+      return {
+        x: Math.random() * w,
+        y: Math.random(),
+        r: 0.7 + Math.random() * 1.9,
+        alpha: 0.16 + Math.random() * 0.42,
+        vx: (Math.random() - 0.5) * 5,
+        vy: rise
+          ? -(3 + Math.random() * 6)
+          : (Math.random() - 0.5) * 4 + 1.2,
+        swayA: 6 + Math.random() * 14,
+        swayF: 0.15 + Math.random() * 0.5,
+        swayP: Math.random() * Math.PI * 2,
+        twF: 0.3 + Math.random() * 0.9,
+        twP: Math.random() * Math.PI * 2,
+        red: Math.random() < 0.42,
+        rise,
+      } as Particle;
+    }
+
     function build() {
-      const count = Math.round(clamp((w * h) / 16500, 40, 140));
-      particles = Array.from({ length: count }, () => {
-        const rise = Math.random() < 0.24;
-        return {
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: 0.7 + Math.random() * 1.9,
-          alpha: 0.16 + Math.random() * 0.42,
-          vx: (Math.random() - 0.5) * 5,
-          vy: rise
-            ? -(3 + Math.random() * 6)
-            : (Math.random() - 0.5) * 4 + 1.2,
-          swayA: 6 + Math.random() * 14,
-          swayF: 0.15 + Math.random() * 0.5,
-          swayP: Math.random() * Math.PI * 2,
-          twF: 0.3 + Math.random() * 0.9,
-          twP: Math.random() * Math.PI * 2,
-          red: Math.random() < 0.42,
-          rise,
-        };
-      });
+      const heroH = Math.min(window.innerHeight, 1900);
+      const contentH = Math.max(
+        document.documentElement.scrollHeight,
+        window.innerHeight * 1.4,
+      );
+      const heroCount = Math.round(clamp((w * heroH) / HERO_HERO_DIV, 34, 130));
+      const restH = Math.max(contentH - heroH, 0);
+      const restCount = Math.round(clamp((w * restH) / REST_DIV, 40, 1400));
+
+      const list: Particle[] = [];
+      for (let i = 0; i < heroCount; i += 1) {
+        const p = makeParticle();
+        p.y = Math.random() * heroH;
+        list.push(p);
+      }
+      for (let i = 0; i < restCount; i += 1) {
+        const p = makeParticle();
+        p.y = heroH + Math.random() * restH;
+        list.push(p);
+      }
+      particles = list;
     }
 
     function resize() {
@@ -107,19 +130,21 @@ export function Particles() {
 
       readTheme();
       smoothScroll += (window.scrollY - smoothScroll) * 0.055;
-      const offY = smoothScroll * 0.12;
+      const off = smoothScroll * 0.55;
       const margin = 90;
       ct.globalCompositeOperation = dark ? "lighter" : "source-over";
       ct.clearRect(0, 0, w, h);
 
-      const positions = new Float64Array(particles.length * 2);
-      const alphas = new Float32Array(particles.length);
+      const pxArr: number[] = [];
+      const pyArr: number[] = [];
+      const aArr: number[] = [];
 
-      for (let i = 0; i < particles.length; i += 1) {
-        const p = particles[i];
-        // gentle repulsion: push away from the cursor within CURSOR_R
+      for (const p of particles) {
+        const sy = p.y - off;
+        if (sy < -margin || sy > h + margin) continue;
+
         const dxC = p.x - cursor.x;
-        const dyC = p.y - cursor.y;
+        const dyC = sy - cursor.y;
         const dC = Math.hypot(dxC, dyC);
         if (dC < CURSOR_R && dC > 0.001) {
           const wgt = (1 - dC / CURSOR_R) * PUSH * dt;
@@ -135,14 +160,14 @@ export function Particles() {
         const sway = Math.sin(t * p.swayF + p.swayP) * p.swayA;
         const tw = 0.72 + 0.28 * Math.sin(t * p.twF + p.twP);
         const px = p.x + sway;
-        const py = ((p.y - offY + margin) % (h + margin * 2)) - margin;
+        const py = sy;
         const alpha = p.alpha * tw;
 
-        positions[i * 2] = px;
-        positions[i * 2 + 1] = py;
-        alphas[i] = alpha;
-
         if (alpha <= 0.02) continue;
+        pxArr.push(px);
+        pyArr.push(py);
+        aArr.push(alpha);
+
         ct.globalAlpha = alpha;
         ct.fillStyle = p.red ? accent : white;
         ct.beginPath();
@@ -150,15 +175,12 @@ export function Particles() {
         ct.fill();
       }
 
-      // constellation lines between nearby particles
       const lineMax = dark ? 0.22 : 0.16;
-      const n = particles.length;
+      const n = pxArr.length;
       for (let i = 0; i < n; i += 1) {
-        if (alphas[i] <= 0.02) continue;
         for (let j = i + 1; j < n; j += 1) {
-          if (alphas[j] <= 0.02) continue;
-          const dx = positions[i * 2] - positions[j * 2];
-          const dy = positions[i * 2 + 1] - positions[j * 2 + 1];
+          const dx = pxArr[i] - pxArr[j];
+          const dy = pyArr[i] - pyArr[j];
           const d2 = dx * dx + dy * dy;
           if (d2 > LINK_DIST * LINK_DIST) continue;
           const a = (1 - Math.sqrt(d2) / LINK_DIST) * lineMax;
@@ -167,8 +189,8 @@ export function Particles() {
           ct.strokeStyle = white;
           ct.lineWidth = 1;
           ct.beginPath();
-          ct.moveTo(positions[i * 2], positions[i * 2 + 1]);
-          ct.lineTo(positions[j * 2], positions[j * 2 + 1]);
+          ct.moveTo(pxArr[i], pyArr[i]);
+          ct.lineTo(pxArr[j], pyArr[j]);
           ct.stroke();
         }
       }
