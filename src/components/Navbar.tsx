@@ -101,6 +101,7 @@ export function Navbar() {
 
       <motion.div
         className="navbar__progress"
+        suppressHydrationWarning
         style={{ scaleX: progressX }}
         data-od-id="scroll-progress"
       />

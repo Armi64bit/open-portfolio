@@ -13,6 +13,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       <motion.div
         whileHover={{ y: -8 }}
         transition={EASE_SPRING}
+        suppressHydrationWarning
         className="pcard__lift"
       >
         <Link
@@ -115,6 +116,7 @@ export function ProjectHeroImage({
   return (
     <motion.div
       className="phero"
+      suppressHydrationWarning
       style={{ aspectRatio: project.imageRatio, perspective: 1000 }}
       initial={{ opacity: 0, scale: 0.96, y: 28, rotateX: 4 }}
       animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
@@ -124,6 +126,7 @@ export function ProjectHeroImage({
         src={project.image}
         alt={project.imageAlt}
         loading={priority ? "eager" : "lazy"}
+        suppressHydrationWarning
         className="phero__img"
         initial={{ scale: 1.12 }}
         animate={{ scale: 1 }}

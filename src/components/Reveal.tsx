@@ -28,6 +28,7 @@ export function Reveal<E extends ElementType = "div">({
   return (
     <MotionTag
       className={className}
+      suppressHydrationWarning
       initial={{ opacity: 0, y: reduce ? 0 : y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once, margin: "0px 0px -12% 0px" }}

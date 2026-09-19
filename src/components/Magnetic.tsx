@@ -45,6 +45,7 @@ export function Magnetic({
     <motion.div
       ref={ref}
       className={className}
+      suppressHydrationWarning
       style={{ x: sx, y: sy, display: "inline-block" }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}

@@ -56,6 +56,7 @@ export function AboutSection() {
           <Reveal delay={0.12}>
             <motion.div
               className="about__portrait"
+              suppressHydrationWarning
               initial={{ clipPath: "inset(0 0 100% 0)" }}
               whileInView={{ clipPath: "inset(0 0 0% 0)" }}
               viewport={{ once: true, margin: "0px 0px -15% 0px" }}

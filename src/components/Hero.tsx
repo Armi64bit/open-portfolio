@@ -96,6 +96,7 @@ export function Hero() {
       <div className="container" style={{ perspective: 1200 }}>
         <motion.h1
           className="display display--hero hero__title"
+          suppressHydrationWarning
           style={{ y: yTitle, rotate: rotateTitle, opacity: fadeTitle }}
           aria-label={word}
         >
@@ -103,6 +104,7 @@ export function Hero() {
             <motion.span
               key={i}
               className="hero__letter"
+              suppressHydrationWarning
               aria-hidden="true"
               initial={{ y: reduce ? 0 : "112%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -117,6 +119,7 @@ export function Hero() {
           <motion.div className="hero__lede-wrap" style={{ y: yText }}>
             <motion.p
               className="hero__lede"
+              suppressHydrationWarning
               initial={{ opacity: 0, y: reduce ? 0 : 30, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.9, ease: EASE, delay: 0.6 }}
@@ -128,6 +131,7 @@ export function Hero() {
 
             <motion.div
               className="hero__meta-row"
+              suppressHydrationWarning
               initial={{ opacity: 0, y: reduce ? 0 : 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, ease: EASE, delay: 0.85 }}
@@ -143,6 +147,7 @@ export function Hero() {
 
           <motion.div
             className="hero__portrait-wrap"
+            suppressHydrationWarning
             style={{ y: yImg }}
             initial={{ opacity: 0, rotateY: reduce ? 0 : 14, rotateX: reduce ? 0 : 10, y: reduce ? 0 : 44, scale: 0.94 }}
             animate={{ opacity: 1, rotateY: 0, rotateX: 0, y: 0, scale: 1 }}
@@ -151,11 +156,13 @@ export function Hero() {
             <motion.div
               className="hero__portrait"
               data-od-id="hero-portrait"
+              suppressHydrationWarning
               style={{ rotateY: tiltY }}
             >
               {/* headline badge */}
               <motion.div
                 className="hero__accent"
+                suppressHydrationWarning
                 aria-hidden="true"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -163,6 +170,7 @@ export function Hero() {
               />
               <motion.div
                 className="hero__headline"
+                suppressHydrationWarning
                 aria-hidden="true"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -175,6 +183,7 @@ export function Hero() {
                 className="hero__visor"
                 data-od-id="hero-portrait-looks"
                 ref={visorRef}
+                suppressHydrationWarning
                 style={{ x: visorX, y: visorY }}
                 onPointerMove={onPointerMove}
                 onPointerLeave={onPointerLeave}
@@ -189,6 +198,7 @@ export function Hero() {
                       width={852}
                       height={1102}
                       aria-hidden={k !== "middle"}
+                      suppressHydrationWarning
                       className={`hero__portrait-img hero__portrait-img--${k}`}
                       style={{ opacity: op }}
                     />
