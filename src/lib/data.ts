@@ -173,6 +173,7 @@ export const cv = {
       label: "LinkedIn",
       url: "https://linkedin.com/in/bahaa-eddine-bouzid-webdev",
     },
+    { label: "Blog", url: "https://armi64bit.github.io/own-blog/" },
   ],
   summary:
     "Full-stack engineer who has shipped React/TypeScript frontends and Spring Boot backends across two internships and six-plus independent projects, including a live AI-driven trading system processing real-time market data across 15 crypto pairs. Comfortable owning features end-to-end, from REST API design through AWS deployment and CI/CD.",
@@ -336,3 +337,5 @@ export const heroPortrait =
 
 export const aboutPortrait =
   "/images/framerusercontent.com/9VzqeInK4U8O75RntX2C3nj4Da4-bb064258fe.jpg";
+
+export const blogUrl = "https://armi64bit.github.io/own-blog/";

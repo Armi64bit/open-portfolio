@@ -1,13 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { blogUrl } from "@/lib/data";
 
 export function Footer() {
   return (
     <footer className="footer" data-od-id="footer">
       <hr className="rule" />
       <div className="container footer__inner">
-        <span>© 2026 Bahaa Eddine Bouzid</span>
+        <a
+          href={blogUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer__blog"
+          data-od-id="blog-link"
+        >
+          Blog <span className="arr">↗</span>
+        </a>
         <LiveClock />
         <span className="chip">
           <span className="dot" aria-hidden="true" />

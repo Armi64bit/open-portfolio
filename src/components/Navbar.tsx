@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
+import { blogUrl } from "@/lib/data";
 
 const NAV = [
   { label: "Home", href: "/" },
   { label: "Work", href: "/work" },
   { label: "CV", href: "/cv" },
   { label: "Contact", href: "/#contact" },
+  { label: "Blog", href: blogUrl, external: true },
 ];
 
 export function Navbar() {
@@ -49,6 +51,24 @@ export function Navbar() {
     return pathname.startsWith(href);
   };
 
+  const renderLinks = (mobile = false) =>
+    NAV.map((item) => (
+      <Link
+        key={item.label}
+        href={item.href}
+        target={item.external ? "_blank" : undefined}
+        rel={item.external ? "noopener noreferrer" : undefined}
+        className={
+          mobile
+            ? "navbar__mobile-link"
+            : `navbar__link${!item.external && isActive(item.href) ? " is-active" : ""}`
+        }
+      >
+        {item.label}
+        {item.external && <span className="arr">↗</span>}
+      </Link>
+    ));
+
   return (
     <header
       className={`navbar${scrolled ? " navbar--scrolled" : ""}`}
@@ -60,15 +80,7 @@ export function Navbar() {
         </Link>
 
         <nav className="navbar__links" aria-label="Primary">
-          {NAV.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`navbar__link${isActive(item.href) ? " is-active" : ""}`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {renderLinks()}
         </nav>
 
         <div className="navbar__actions">
@@ -110,7 +122,12 @@ export function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 * i, duration: 0.35 }}
                 >
-                  <Link href={item.href} className="navbar__mobile-link">
+                  <Link
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noopener noreferrer" : undefined}
+                    className="navbar__mobile-link"
+                  >
                     <span className="navbar__mobile-idx">
                       0{i + 1}
                     </span>

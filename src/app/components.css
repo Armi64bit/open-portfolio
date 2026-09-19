@@ -399,6 +399,13 @@
   align-items: flex-start;
 }
 
+.about__actions {
+  display: inline-flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .about__portrait {
   width: 100%;
   max-width: 300px;
@@ -597,6 +604,23 @@
   font-size: 10px;
   margin-inline-start: 4px;
   letter-spacing: 0.1em;
+}
+
+.footer__blog {
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+.footer__blog:hover {
+  color: var(--fg);
+  transform: translateX(3px);
+}
+
+.footer__blog .arr {
+  font-size: 12px;
 }
 
 /* ---------- page header + work list ---------- */

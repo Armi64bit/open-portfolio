@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { aboutPortrait, clientLogos, services } from "@/lib/data";
+import { aboutPortrait, blogUrl, clientLogos, services } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Magnetic } from "./Magnetic";
 
@@ -26,14 +26,30 @@ export function AboutSection() {
               </p>
             </Reveal>
             <Reveal delay={0.08}>
-              <Magnetic>
-                <Link href="/cv" className="link" data-od-id="view-resume">
-                  View Résumé
-                  <span className="arr" aria-hidden="true">
-                    ↗
-                  </span>
-                </Link>
-              </Magnetic>
+              <div className="about__actions">
+                <Magnetic>
+                  <Link href="/cv" className="link" data-od-id="view-resume">
+                    View Résumé
+                    <span className="arr" aria-hidden="true">
+                      ↗
+                    </span>
+                  </Link>
+                </Magnetic>
+                <Magnetic>
+                  <a
+                    href={blogUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link"
+                    data-od-id="read-blog"
+                  >
+                    Read the Blog
+                    <span className="arr" aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+                </Magnetic>
+              </div>
             </Reveal>
           </div>
 
