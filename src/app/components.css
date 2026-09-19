@@ -286,6 +286,25 @@
   max-width: 52ch;
 }
 
+/* ---------- cursor-following inversion lens ---------- */
+.section--lens {
+  isolation: isolate;
+}
+
+.hover-lens {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: var(--lens, #ffffff);
+  mix-blend-mode: difference;
+  filter: blur(14px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+  will-change: left, top;
+}
+
 /* ---------- project cards ---------- */
 .pcard__grid {
   display: grid;
