@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { heroPortraitTrio } from "@/lib/data";
 import { EASE } from "@/lib/motion";
 import { Magnetic } from "./Magnetic";
@@ -17,17 +17,15 @@ type Look = keyof typeof heroPortraitTrio;
 
 const LOOK_ORDER: Look[] = ["left", "middle", "right"];
 
-/** Opacity of the straight-on frame given cursor position v in [-1, 1].
- *  Zones are roughly thirds of the image: cursor clearly left -> left frame,
- *  clearly right -> right frame, with a narrow center band and soft blends at
- *  the boundaries. */
+/** Opacity of the straight-on frame given cursor position v in [-1, 1]
+ *  across the viewport. Left third -> left frame, right third -> right frame,
+ *  with a narrow center band and soft blends at the boundaries. */
 function midOpacity(v: number) {
   return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.22) / 0.28));
 }
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const visorRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
@@ -50,12 +48,11 @@ export function Hero() {
     [1, reduce ? 1 : 0],
   );
 
-  // cursor-follow portrait: hover position is measured against the portrait's
-  // own box. Left of the image -> left-looking frame, right -> right-looking
-  // frame, wide center -> straight-on frame, and hovering the top/bottom edge
-  // of the frame (or leaving it) returns to the straight-on frame. The frames
-  // crossfade continuously and the portrait itself drifts and tilts slightly
-  // toward the cursor.
+  // cursor-follow portrait: the whole page tracks the mouse, not just the
+  // image itself. Cursor in the left third of the viewport -> left-looking
+  // frame, center third -> straight-on frame, right third -> right-looking
+  // frame. The frames crossfade continuously and the portrait drifts and
+  // tilts slightly toward the cursor wherever it is on the page.
   const pointer = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const smooth = useSpring(pointer, { stiffness: 150, damping: 22, mass: 0.35 });
@@ -71,24 +68,24 @@ export function Hero() {
   const leftOp = useTransform(smooth, (v) => (v < 0 ? 1 - midOpacity(v) : 0));
   const rightOp = useTransform(smooth, (v) => (v > 0 ? 1 - midOpacity(v) : 0));
 
-  function onPointerMove(e: React.PointerEvent) {
-    const rect = visorRef.current?.getBoundingClientRect();
-    if (!rect || !rect.width || !rect.height) return;
-    const relX = (e.clientX - rect.left) / rect.width;
-    const relY = (e.clientY - rect.top) / rect.height;
-    if (relY < 0.08 || relY > 0.92) {
+  useEffect(() => {
+    function onMove(e: PointerEvent) {
+      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+      pointer.set(Math.max(-1, Math.min(1, nx)));
+      pointerY.set(Math.max(-1, Math.min(1, ny)));
+    }
+    function onLeave() {
       pointer.set(0);
       pointerY.set(0);
-      return;
     }
-    pointer.set(Math.max(-1, Math.min(1, (relX - 0.5) * 2)));
-    pointerY.set(Math.max(-1, Math.min(1, (relY - 0.5) * 2)));
-  }
-
-  function onPointerLeave() {
-    pointer.set(0);
-    pointerY.set(0);
-  }
+    window.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerleave", onLeave);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerleave", onLeave);
+    };
+  }, [pointer, pointerY]);
 
   const word = "BAHAA";
 
@@ -183,11 +180,8 @@ export function Hero() {
               <motion.div
                 className="hero__visor"
                 data-od-id="hero-portrait-looks"
-                ref={visorRef}
                 suppressHydrationWarning
                 style={{ x: visorX, y: visorY }}
-                onPointerMove={onPointerMove}
-                onPointerLeave={onPointerLeave}
               >
                 {LOOK_ORDER.map((k) => {
                   const op = k === "left" ? leftOp : k === "right" ? rightOp : midOp;
