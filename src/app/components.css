@@ -509,7 +509,7 @@
   pointer-events: auto;
   display: block;
   position: relative;
-  width: min(88vw, 520px);
+  width: min(90vw, 560px);
   text-align: center;
 }
 

@@ -14,8 +14,6 @@ import { EASE } from "@/lib/motion";
 
 type Look = keyof typeof heroPortraitTrio;
 
-const LOOK_ORDER: Look[] = ["left", "middle", "right"];
-
 type TrailItem = {
   id: number;
   src: string;
@@ -27,13 +25,6 @@ type TrailItem = {
 };
 
 const TRAIL_MAX = 10;
-
-/** Opacity of the straight-on frame given cursor position v in [-1, 1]
- *  across the viewport. Left third -> left frame, right third -> right frame,
- *  with a narrow center band and soft blends at the boundaries. */
-function midOpacity(v: number) {
-  return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.22) / 0.28));
-}
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -58,25 +49,28 @@ export function Hero() {
     [1, reduce ? 1 : 0],
   );
 
-  // cursor-follow portrait: the whole page tracks the mouse, not just the
-  // image itself. Cursor in the left third of the viewport -> left-looking
-  // frame, center third -> straight-on frame, right third -> right-looking
-  // frame. The frames crossfade continuously and the portrait drifts and
-  // tilts slightly toward the cursor wherever it is on the page.
+  // cursor-follow portrait: the whole page tracks the mouse. The image
+  // itself swaps instantly (no fade) to the frame matching the cursor
+  // third, while the portrait drifts and tilts toward the cursor.
   const pointer = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const smooth = useSpring(pointer, { stiffness: 150, damping: 22, mass: 0.35 });
-  const smoothY = useSpring(pointerY, { stiffness: 150, damping: 22, mass: 0.35 });
+  const [look, setLook] = useState<Look>("middle");
   const tiltY = useSpring(
     useTransform(pointer, [-1, 1], [5, -5]),
     { stiffness: 130, damping: 18 },
   );
-  const visorX = useTransform(smooth, [-1, 1], [15, -15]);
-  const visorY = useTransform(smoothY, [-1, 1], [9, -9]);
-
-  const midOp = useTransform(smooth, (v) => midOpacity(v));
-  const leftOp = useTransform(smooth, (v) => (v < 0 ? 1 - midOpacity(v) : 0));
-  const rightOp = useTransform(smooth, (v) => (v > 0 ? 1 - midOpacity(v) : 0));
+  const tiltX = useSpring(
+    useTransform(pointerY, [-1, 1], [-3, 3]),
+    { stiffness: 130, damping: 18 },
+  );
+  const driftX = useSpring(
+    useTransform(pointer, [-1, 1], [16, -16]),
+    { stiffness: 60, damping: 20 },
+  );
+  const driftY = useSpring(
+    useTransform(pointerY, [-1, 1], [10, -10]),
+    { stiffness: 60, damping: 20 },
+  );
 
   // Hero-only inversion lens.
   const [lensOn, setLensOn] = useState(false);
@@ -123,14 +117,16 @@ export function Hero() {
 
   useEffect(() => {
     function onMove(e: PointerEvent) {
-      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
-      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-      pointer.set(Math.max(-1, Math.min(1, nx)));
-      pointerY.set(Math.max(-1, Math.min(1, ny)));
+      const nx = Math.max(-1, Math.min(1, (e.clientX / window.innerWidth - 0.5) * 2));
+      const ny = Math.max(-1, Math.min(1, (e.clientY / window.innerHeight - 0.5) * 2));
+      pointer.set(nx);
+      pointerY.set(ny);
+      setLook(nx < -0.22 ? "left" : nx > 0.22 ? "right" : "middle");
     }
     function onLeave() {
       pointer.set(0);
       pointerY.set(0);
+      setLook("middle");
     }
     window.addEventListener("pointermove", onMove);
     document.addEventListener("pointerleave", onLeave);
@@ -186,7 +182,7 @@ export function Hero() {
             className="hero__portrait"
             data-od-id="hero-portrait"
             suppressHydrationWarning
-            style={{ rotateY: tiltY }}
+            style={{ rotateY: tiltY, rotateX: tiltX, x: driftX, y: driftY }}
           >
             {/* headline badge */}
             <motion.div
@@ -208,29 +204,16 @@ export function Hero() {
               Full-stack · React · Spring Boot
             </motion.div>
 
-            <motion.div
-              className="hero__visor"
-              data-od-id="hero-portrait-looks"
-              suppressHydrationWarning
-              style={{ x: visorX, y: visorY }}
-            >
-              {LOOK_ORDER.map((k) => {
-                const op = k === "left" ? leftOp : k === "right" ? rightOp : midOp;
-                return (
-                  <motion.img
-                    key={k}
-                    src={heroPortraitTrio[k]}
-                    alt={k === "middle" ? "Portrait of Bahaa Eddine Bouzid" : ""}
-                    width={852}
-                    height={1102}
-                    aria-hidden={k !== "middle"}
-                    suppressHydrationWarning
-                    className={`hero__portrait-img hero__portrait-img--${k}`}
-                    style={{ opacity: op }}
-                  />
-                );
-              })}
-            </motion.div>
+            <div className="hero__visor">
+              <img
+                src={heroPortraitTrio[look]}
+                alt="Portrait of Bahaa Eddine Bouzid"
+                width={852}
+                height={1102}
+                suppressHydrationWarning
+                className="hero__portrait-img"
+              />
+            </div>
           </motion.div>
         </motion.div>
       </div>
@@ -256,7 +239,7 @@ export function Hero() {
               y: [0, -34, -66, -98, -150],
               rotate: [t.rot, t.rot + 10, t.rot + 4, t.rot - 6, t.rot - 2],
             }}
-            transition={{ duration: 3.2, ease: EASE, times: [0, 0.12, 0.45, 0.8, 1] }}
+            transition={{ duration: 1.7, ease: EASE, times: [0, 0.12, 0.45, 0.8, 1] }}
             onAnimationComplete={() =>
               setTrail((prev) => prev.filter((p) => p.id !== t.id))
             }

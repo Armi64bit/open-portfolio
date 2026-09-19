@@ -43,6 +43,31 @@ export function RingCarousel() {
   const spin = useMotionValue(0);
   const spinSmooth = useSpring(spin, { stiffness: 170, damping: 26, mass: 0.4 });
 
+  // Magnetic ring: the stage tilts toward the cursor while it moves across
+  // the carousel (spring-smoothed, zeroed on leave).
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
+  const ringTiltY = useSpring(
+    useTransform(cursorX, [-1, 1], [-7, 7]),
+    { stiffness: 120, damping: 18 },
+  );
+  const ringTiltX = useSpring(
+    useTransform(cursorY, [-1, 1], [6, -6]),
+    { stiffness: 120, damping: 18 },
+  );
+
+  const onStageMove = (e: React.PointerEvent) => {
+    const el = stageRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    cursorX.set(
+      Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1)),
+    );
+    cursorY.set(
+      Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height) * 2 - 1)),
+    );
+  };
+
   const rot = useTransform(
     () => scrollSmooth.get() * Math.PI * 2 + spinSmooth.get()
   );
@@ -99,10 +124,16 @@ export function RingCarousel() {
 
   return (
     <div className="ring" ref={wrapRef} data-od-id="ring-carousel">
-      <div
+      <motion.div
         className={`ring__stage${grabbing ? " is-dragging" : ""}`}
         ref={stageRef}
         onPointerDown={onPointerDown}
+        onPointerMove={onStageMove}
+        onPointerLeave={() => {
+          cursorX.set(0);
+          cursorY.set(0);
+        }}
+        style={{ rotateX: ringTiltX, rotateY: ringTiltY }}
         data-od-id="ring-stage"
       >
         {size.w > 0 &&
@@ -169,7 +200,7 @@ export function RingCarousel() {
             Scroll or drag to roll
           </span>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -189,9 +220,9 @@ function RingCard({
   h: number;
   movedRef: { current: number };
 }) {
-  const rx = Math.min(w * 0.34, 470);
-  const ry = Math.min(h * 0.3, 150);
-  const baseW = Math.min(Math.max(w * 0.15, 92), 190);
+  const rx = Math.min(w * 0.4, 620);
+  const ry = Math.min(h * 0.42, 240);
+  const baseW = Math.min(Math.max(w * 0.18, 118), 250);
   const baseH = baseW * RING_CARD_RATIO;
 
   const angle = useTransform(rot, (v) => index * STEP + v);
