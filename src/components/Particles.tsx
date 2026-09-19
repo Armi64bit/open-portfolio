@@ -21,11 +21,18 @@ type Particle = {
 const LINK_DIST = 88;
 const CURSOR_R = 92;
 const PUSH = 170;
-const HERO_HERO_DIV = 17000; // particles per px^2 in the hero zone
-const REST_DIV = 8500; // ~2x denser everywhere below the hero
+const LINE_CAP = 200;
+const HERO_DIV = 17000; // particles per px^2 in the hero zone
+const REST_DIV = 10000; // base density everywhere below the hero
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
+}
+
+function gauss() {
+  let s = 0;
+  for (let k = 0; k < 3; k += 1) s += Math.random();
+  return (s / 3 - 0.5) * 2;
 }
 
 export function Particles() {
@@ -94,9 +101,37 @@ export function Particles() {
         document.documentElement.scrollHeight,
         window.innerHeight * 1.4,
       );
-      const heroCount = Math.round(clamp((w * heroH) / HERO_HERO_DIV, 34, 130));
+
+      const pageY = (sel: string) => {
+        const el = document.querySelector(sel);
+        if (!el) return -1;
+        return el.getBoundingClientRect().top + window.scrollY;
+      };
+
+      // The ring section is 260vh of scroll with a sticky centered stage, so
+      // its page-space center sits half a label-length below the section top.
+      // Fallbacks keep the layout robust while sections are still applying.
+      const projectsTop = pageY("#projects");
+      const ringC =
+        projectsTop >= 0
+          ? projectsTop + window.innerHeight * 1.3
+          : contentH * 0.45;
+      const contactTop = pageY("#contact");
+      const contactC =
+        contactTop >= 0 ? contactTop + 260 : contentH * 0.88;
+
+      const heroCount = Math.round(clamp((w * heroH) / HERO_DIV, 34, 130));
       const restH = Math.max(contentH - heroH, 0);
-      const restCount = Math.round(clamp((w * restH) / REST_DIV, 40, 1400));
+      const restCount = Math.round(clamp((w * restH) / REST_DIV, 40, 1200));
+
+      const ringSX = 240;
+      const ringSY = 220;
+      const ringCount = Math.round(clamp((ringSX * 2 * ringSY * 2) / 1100, 40, 200));
+
+      const contactStd = 240;
+      const contactCount = Math.round(
+        clamp((w * (contactStd * 2)) / 3400, 40, 220),
+      );
 
       const list: Particle[] = [];
       for (let i = 0; i < heroCount; i += 1) {
@@ -107,6 +142,18 @@ export function Particles() {
       for (let i = 0; i < restCount; i += 1) {
         const p = makeParticle();
         p.y = heroH + Math.random() * restH;
+        list.push(p);
+      }
+      for (let i = 0; i < ringCount; i += 1) {
+        const p = makeParticle();
+        p.x = w / 2 + gauss() * ringSX;
+        p.y = ringC + gauss() * ringSY;
+        list.push(p);
+      }
+      for (let i = 0; i < contactCount; i += 1) {
+        const p = makeParticle();
+        p.x = w / 2 + gauss() * w * 0.45;
+        p.y = contactC + gauss() * contactStd;
         list.push(p);
       }
       particles = list;
@@ -176,9 +223,9 @@ export function Particles() {
       }
 
       const lineMax = dark ? 0.22 : 0.16;
-      const n = pxArr.length;
-      for (let i = 0; i < n; i += 1) {
-        for (let j = i + 1; j < n; j += 1) {
+      const m = Math.min(pxArr.length, LINE_CAP);
+      for (let i = 0; i < m; i += 1) {
+        for (let j = i + 1; j < m; j += 1) {
           const dx = pxArr[i] - pxArr[j];
           const dy = pyArr[i] - pyArr[j];
           const d2 = dx * dx + dy * dy;

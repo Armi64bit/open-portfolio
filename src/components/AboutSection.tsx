@@ -2,9 +2,76 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { aboutPortrait, blogUrl, clientLogos, services } from "@/lib/data";
+import type { IconType } from "react-icons";
+import { aboutPortrait, blogUrl, services, tools } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Magnetic } from "./Magnetic";
+import { DiCss3, DiJava } from "react-icons/di";
+import {
+  SiAngular,
+  SiApachemaven,
+  SiCplusplus,
+  SiDjango,
+  SiDocker,
+  SiFastapi,
+  SiFirebase,
+  SiFlutter,
+  SiGit,
+  SiGithubactions,
+  SiGooglegemini,
+  SiGrafana,
+  SiHtml5,
+  SiJavascript,
+  SiJenkins,
+  SiJest,
+  SiJunit5,
+  SiLaravel,
+  SiMongodb,
+  SiMysql,
+  SiNestjs,
+  SiNodedotjs,
+  SiPrometheus,
+  SiPython,
+  SiReact,
+  SiSpringboot,
+  SiSymfony,
+  SiTailwindcss,
+  SiTypescript,
+} from "react-icons/si";
+
+const TOOL_ICONS: Record<string, IconType> = {
+  java: DiJava,
+  css3: DiCss3,
+  angular: SiAngular,
+  cplusplus: SiCplusplus,
+  django: SiDjango,
+  docker: SiDocker,
+  fastapi: SiFastapi,
+  firebase: SiFirebase,
+  flutter: SiFlutter,
+  git: SiGit,
+  githubactions: SiGithubactions,
+  gemini: SiGooglegemini,
+  grafana: SiGrafana,
+  html5: SiHtml5,
+  javascript: SiJavascript,
+  jenkins: SiJenkins,
+  jest: SiJest,
+  junit: SiJunit5,
+  laravel: SiLaravel,
+  maven: SiApachemaven,
+  mongodb: SiMongodb,
+  mysql: SiMysql,
+  nestjs: SiNestjs,
+  nodedotjs: SiNodedotjs,
+  prometheus: SiPrometheus,
+  python: SiPython,
+  react: SiReact,
+  springboot: SiSpringboot,
+  symfony: SiSymfony,
+  tailwind: SiTailwindcss,
+  typescript: SiTypescript,
+};
 
 export function AboutSection() {
   return (
@@ -94,24 +161,33 @@ export function AboutSection() {
           </div>
         </div>
 
-        <div className="clients" data-od-id="clients">
+        <div className="tools" data-od-id="tools">
           <Reveal>
-            <span className="kicker">Clients</span>
+            <span className="kicker">Tools &amp; Languages</span>
           </Reveal>
           <Reveal delay={0.06}>
             <div className="marquee">
               <div className="marquee__track">
-                {[...clientLogos, ...clientLogos].map((src, i) => (
-                  <div className="marquee__item" key={i} aria-hidden={i >= clientLogos.length}>
-                    <img
-                      src={src}
-                      alt=""
-                      loading="lazy"
-                      width={120}
-                      height={100}
-                    />
-                  </div>
-                ))}
+                {[...tools, ...tools].map((t, i) => {
+                  const Icon = TOOL_ICONS[t.icon];
+                  return (
+                    <div
+                      className="tools__chip"
+                      key={i}
+                      aria-hidden={i >= tools.length}
+                      title={t.label}
+                    >
+                      <span
+                        className="tools__ic"
+                        style={{ color: t.color }}
+                        aria-hidden="true"
+                      >
+                        {Icon ? <Icon size={20} /> : null}
+                      </span>
+                      <span className="tools__label">{t.label}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </Reveal>

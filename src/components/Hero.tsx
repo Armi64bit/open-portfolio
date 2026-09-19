@@ -231,15 +231,15 @@ export function Hero() {
               marginLeft: -t.size / 2,
               marginTop: -t.size / 2,
             }}
-            initial={{ opacity: 0, scale: t.scale * 0.5, x: 0, y: 0, rotate: t.rot }}
+            initial={{ opacity: 0, scale: t.scale * 0.45, x: 0, y: 0, rotate: t.rot }}
             animate={{
-              opacity: [0, 0.92, 0.9, 0.8, 0],
-              scale: [t.scale * 0.5, t.scale, t.scale * 1.06, t.scale * 1.1, t.scale * 0.85],
-              x: [0, 46, 78, 34, 0],
-              y: [0, -34, -66, -98, -150],
-              rotate: [t.rot, t.rot + 10, t.rot + 4, t.rot - 6, t.rot - 2],
+              opacity: [0, 0.92, 0.9, 0],
+              scale: [t.scale * 0.45, t.scale, t.scale * 1.05, t.scale * 1.12],
+              x: [0, 46, 104, 168],
+              y: [0, -70, -150, -240],
+              rotate: [t.rot, t.rot + 12, t.rot + 8, t.rot + 4],
             }}
-            transition={{ duration: 1.7, ease: EASE, times: [0, 0.12, 0.45, 0.8, 1] }}
+            transition={{ duration: 1.7, ease: EASE, times: [0, 0.14, 0.52, 1] }}
             onAnimationComplete={() =>
               setTrail((prev) => prev.filter((p) => p.id !== t.id))
             }

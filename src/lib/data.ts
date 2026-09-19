@@ -324,12 +324,44 @@ export const services = [
   },
 ];
 
-export const clientLogos = [
-  "/images/framerusercontent.com/Pj4r2WPp521SAmFTATceGMTOB8Y-6101122e22.png",
-  "/images/framerusercontent.com/W34K33eayQqhINfB7JT0wSEPTc-fd45aa66fa.png",
-  "/images/framerusercontent.com/CDDnckZCkn2N4IV8qLFsOtS8KEs-7467c0c647.png",
-  "/images/framerusercontent.com/qVxl1TaRgKDniIkfQpLcGews0-cf9b7bea0f.png",
-  "/images/framerusercontent.com/dkNhhM1J21y7SEMm8NjSp31goOU-d99114b4f4.png",
+export type Tool = {
+  label: string;
+  icon: string;
+  color: string;
+};
+
+export const tools: Tool[] = [
+  { label: "Java", icon: "java", color: "#e76f00" },
+  { label: "JavaScript", icon: "javascript", color: "#f7df1e" },
+  { label: "TypeScript", icon: "typescript", color: "#3178c6" },
+  { label: "Python", icon: "python", color: "#3776ab" },
+  { label: "C++", icon: "cplusplus", color: "#00599c" },
+  { label: "React", icon: "react", color: "#61dafb" },
+  { label: "Angular", icon: "angular", color: "#dd0031" },
+  { label: "HTML5", icon: "html5", color: "#e34f26" },
+  { label: "CSS3", icon: "css3", color: "#1572b6" },
+  { label: "Tailwind CSS", icon: "tailwind", color: "#06b6d4" },
+  { label: "Flutter", icon: "flutter", color: "#02569b" },
+  { label: "Spring Boot", icon: "springboot", color: "#6db33f" },
+  { label: "Node.js", icon: "nodedotjs", color: "#339933" },
+  { label: "NestJS", icon: "nestjs", color: "#e0234e" },
+  { label: "FastAPI", icon: "fastapi", color: "#009688" },
+  { label: "Django", icon: "django", color: "#092e20" },
+  { label: "Laravel", icon: "laravel", color: "#ff2d20" },
+  { label: "Symfony", icon: "symfony", color: "#7a7a7a" },
+  { label: "MongoDB", icon: "mongodb", color: "#47a248" },
+  { label: "MySQL", icon: "mysql", color: "#4479a1" },
+  { label: "Docker", icon: "docker", color: "#2496ed" },
+  { label: "Jenkins", icon: "jenkins", color: "#d24939" },
+  { label: "Git", icon: "git", color: "#f05032" },
+  { label: "GitHub Actions", icon: "githubactions", color: "#2088ff" },
+  { label: "Maven", icon: "maven", color: "#c71a36" },
+  { label: "Prometheus", icon: "prometheus", color: "#e6522c" },
+  { label: "Grafana", icon: "grafana", color: "#f46800" },
+  { label: "Firebase", icon: "firebase", color: "#ffca28" },
+  { label: "Jest", icon: "jest", color: "#c21325" },
+  { label: "JUnit", icon: "junit", color: "#25a162" },
+  { label: "Gemini", icon: "gemini", color: "#8e75b2" },
 ];
 
 export const heroPortrait =
