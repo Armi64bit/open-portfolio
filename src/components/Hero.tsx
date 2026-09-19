@@ -3,13 +3,12 @@
 import {
   motion,
   useMotionValue,
-  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { heroPortraitTrio } from "@/lib/data";
 import { EASE } from "@/lib/motion";
 import { Magnetic } from "./Magnetic";
@@ -18,12 +17,14 @@ type Look = keyof typeof heroPortraitTrio;
 
 const LOOK_ORDER: Look[] = ["left", "middle", "right"];
 
+/** Opacity of the straight-on frame given cursor position v in [-1, 1]. */
+function midOpacity(v: number) {
+  return 1 - Math.min(1, Math.max(0, (Math.abs(v) - 0.17) / 0.16));
+}
+
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const [look, setLook] = useState<Look>("middle");
-  const lookRef = useRef<Look>("middle");
-  const pointerX = useMotionValue(0.5);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -45,40 +46,33 @@ export function Hero() {
     [1, reduce ? 1 : 0],
   );
 
-  // the portrait turns to follow the cursor: pointer left third -> looks
-  // left, right third -> looks right, center -> facing straight ahead.
+  // cursor-follow portrait: normalized pointer position across the hero is
+  // -1 (left) .. 1 (right). The three frames crossfade in a continuous,
+  // partition-of-unity blend so the portrait appears to turn toward the
+  // cursor; the portrait itself tilts subtly in the same direction.
+  const pointer = useMotionValue(0);
+  const smooth = useSpring(pointer, { stiffness: 150, damping: 22, mass: 0.35 });
   const tiltY = useSpring(
-    useTransform(pointerX, [0, 1], reduce ? [0, 0] : [7, -7]),
+    useTransform(pointer, [-1, 1], reduce ? [0, 0] : [5, -5]),
     { stiffness: 130, damping: 18 },
   );
+  const visorX = useTransform(smooth, [-1, 1], reduce ? [0, 0] : [8, -8]);
+
+  const midOp = useTransform(smooth, (v) => midOpacity(v));
+  const leftOp = useTransform(smooth, (v) => (v < 0 ? 1 - midOpacity(v) : 0));
+  const rightOp = useTransform(smooth, (v) => (v > 0 ? 1 - midOpacity(v) : 0));
 
   function onPointerMove(e: React.PointerEvent) {
-    if (reduce || !ref.current) return;
+    if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
+    if (!rect.width) return;
     const rel = (e.clientX - rect.left) / rect.width;
-    pointerX.set(rel);
-    const next: Look = rel < 0.35 ? "left" : rel > 0.65 ? "right" : "middle";
-    if (next !== lookRef.current) {
-      lookRef.current = next;
-      setLook(next);
-    }
+    pointer.set(Math.max(-1, Math.min(1, (rel - 0.5) * 2)));
   }
 
   function onPointerLeave() {
-    if (reduce) return;
-    pointerX.set(0.5);
-    lookRef.current = "middle";
-    setLook("middle");
+    pointer.set(0);
   }
-
-  useMotionValueEvent(pointerX, "change", (v) => {
-    if (reduce) return;
-    const next: Look = v < 0.35 ? "left" : v > 0.65 ? "right" : "middle";
-    if (next !== lookRef.current) {
-      lookRef.current = next;
-      setLook(next);
-    }
-  });
 
   const word = "BAHAA";
 
@@ -142,7 +136,7 @@ export function Hero() {
           <motion.div
             className="hero__portrait-wrap"
             style={{ y: yImg }}
-            initial={{ opacity: 0, rotateY: 14, rotateX: 10, y: reduce ? 0 : 44, scale: 0.94 }}
+            initial={{ opacity: 0, rotateY: reduce ? 0 : 14, rotateX: reduce ? 0 : 10, y: reduce ? 0 : 44, scale: 0.94 }}
             animate={{ opacity: 1, rotateY: 0, rotateX: 0, y: 0, scale: 1 }}
             transition={{ duration: 1.1, ease: EASE, delay: 0.4 }}
           >
@@ -169,19 +163,27 @@ export function Hero() {
                 Full-stack · React · Spring Boot
               </motion.div>
 
-              <div className="hero__visor" data-od-id="hero-portrait-looks">
-                {LOOK_ORDER.map((k) => (
-                  <img
-                    key={k}
-                    src={heroPortraitTrio[k]}
-                    alt={k === "middle" ? "Portrait of Bahaa Eddine Bouzid" : ""}
-                    width={852}
-                    height={1102}
-                    aria-hidden={k !== "middle"}
-                    className={`hero__portrait-img hero__portrait-img--${k}${look === k ? " is-active" : ""}`}
-                  />
-                ))}
-              </div>
+              <motion.div
+                className="hero__visor"
+                data-od-id="hero-portrait-looks"
+                style={{ x: visorX }}
+              >
+                {LOOK_ORDER.map((k) => {
+                  const op = k === "left" ? leftOp : k === "right" ? rightOp : midOp;
+                  return (
+                    <motion.img
+                      key={k}
+                      src={heroPortraitTrio[k]}
+                      alt={k === "middle" ? "Portrait of Bahaa Eddine Bouzid" : ""}
+                      width={852}
+                      height={1102}
+                      aria-hidden={k !== "middle"}
+                      className={`hero__portrait-img hero__portrait-img--${k}`}
+                      style={{ opacity: op }}
+                    />
+                  );
+                })}
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
