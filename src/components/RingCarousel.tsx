@@ -66,30 +66,36 @@ export function RingCarousel() {
 
   const current = projects[active];
 
+  const progressScale = useTransform(scrollYProgress, (v) => v);
+
   const onPointerDown = (e: React.PointerEvent) => {
     dragging.current = true;
     moved.current = 0;
     lastX.current = e.clientX;
     setGrabbing(true);
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch {
-      /* noop */
-    }
   };
 
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current) return;
-    const dx = e.clientX - lastX.current;
-    lastX.current = e.clientX;
-    moved.current += Math.abs(dx);
-    spin.set(spin.get() + dx * 0.0042);
-  };
-
-  const endDrag = () => {
-    dragging.current = false;
-    setGrabbing(false);
-  };
+  useEffect(() => {
+    if (!grabbing) return;
+    const onMove = (e: PointerEvent) => {
+      const dx = e.clientX - lastX.current;
+      lastX.current = e.clientX;
+      moved.current += Math.abs(dx);
+      spin.set(spin.get() + dx * 0.0042);
+    };
+    const onUp = () => {
+      dragging.current = false;
+      setGrabbing(false);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
+  }, [grabbing, spin]);
 
   return (
     <div className="ring" ref={wrapRef} data-od-id="ring-carousel">
@@ -97,15 +103,26 @@ export function RingCarousel() {
         className={`ring__stage${grabbing ? " is-dragging" : ""}`}
         ref={stageRef}
         onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
         data-od-id="ring-stage"
       >
         {size.w > 0 &&
           projects.map((p, i) => (
-            <RingCard key={p.slug} project={p} index={i} rot={rot} w={size.w} h={size.h} />
+            <RingCard
+              key={p.slug}
+              project={p}
+              index={i}
+              rot={rot}
+              w={size.w}
+              h={size.h}
+              movedRef={moved}
+            />
           ))}
+
+        <motion.div
+          className="ring__progress"
+          style={{ scaleX: progressScale }}
+          aria-hidden="true"
+        />
 
         <div className="ring__display">
           <Link
@@ -169,12 +186,14 @@ function RingCard({
   rot,
   w,
   h,
+  movedRef,
 }: {
   project: Project;
   index: number;
   rot: MotionValue<number>;
   w: number;
   h: number;
+  movedRef: { current: number };
 }) {
   const rx = Math.min(w * 0.34, 470);
   const ry = Math.min(h * 0.3, 150);
@@ -195,7 +214,6 @@ function RingCard({
   return (
     <motion.div
       className="ring__card"
-      aria-hidden="true"
       style={{
         width: baseW,
         height: baseH,
@@ -209,7 +227,18 @@ function RingCard({
         zIndex: z,
       }}
     >
-      <img src={project.image} alt="" loading="lazy" width={600} height={400} />
+      <Link
+        href={`/work/${project.slug}`}
+        aria-label={`Open ${project.title} case`}
+        data-od-id={`ring-card-${project.slug}`}
+        onClick={(e) => {
+          if (movedRef.current > 6) e.preventDefault();
+          movedRef.current = 0;
+        }}
+        onDragStart={(e) => e.preventDefault()}
+      >
+        <img src={project.image} alt="" loading="lazy" width={600} height={400} />
+      </Link>
     </motion.div>
   );
 }
