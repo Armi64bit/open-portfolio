@@ -11,7 +11,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { projects, heroPortraitTrio } from "@/lib/data";
 import { EASE } from "@/lib/motion";
-import { Magnetic } from "./Magnetic";
 
 type Look = keyof typeof heroPortraitTrio;
 
@@ -24,9 +23,10 @@ type TrailItem = {
   y: number;
   rot: number;
   scale: number;
+  size: number;
 };
 
-const TRAIL_MAX = 14;
+const TRAIL_MAX = 10;
 
 /** Opacity of the straight-on frame given cursor position v in [-1, 1]
  *  across the viewport. Left third -> left frame, right third -> right frame,
@@ -46,7 +46,6 @@ export function Hero() {
 
   // parallax layers
   const yImg = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -120]);
-  const yText = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 70]);
   const yTitle = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 150]);
   const rotateTitle = useTransform(
     scrollYProgress,
@@ -97,7 +96,7 @@ export function Hero() {
     const x = clientX - r.left;
     const y = clientY - r.top;
     const now = performance.now();
-    if (Math.hypot(x - s.lastX, y - s.lastY) < 16 || now - s.lastT < 40) return;
+    if (Math.hypot(x - s.lastX, y - s.lastY) < 34 || now - s.lastT < 90) return;
     s.lastX = x;
     s.lastY = y;
     s.lastT = now;
@@ -107,8 +106,9 @@ export function Hero() {
       src,
       x,
       y,
-      rot: (Math.random() - 0.5) * 44,
+      rot: (Math.random() - 0.5) * 36,
       scale: 0.9 + Math.random() * 0.25,
+      size: Math.round(180 + Math.random() * 90),
     };
     setTrail((prev) => [...prev.slice(-(TRAIL_MAX - 1)), item]);
   }
@@ -152,7 +152,7 @@ export function Hero() {
       onPointerEnter={() => setLensOn(true)}
       onPointerLeave={() => setLensOn(false)}
     >
-      <div className="container" style={{ perspective: 1200 }}>
+      <div className="container">
         <motion.h1
           className="display display--hero hero__title"
           suppressHydrationWarning
@@ -174,96 +174,65 @@ export function Hero() {
           ))}
         </motion.h1>
 
-        <div className="hero__grid">
-          <motion.div className="hero__lede-wrap" style={{ y: yText }}>
-            <motion.p
-              className="hero__lede"
-              suppressHydrationWarning
-              initial={{ opacity: 0, y: reduce ? 0 : 30, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.9, ease: EASE, delay: 0.6 }}
-            >
-              I&apos;m Bahaa Eddine Bouzid — a full-stack engineer building
-              dependable web products, real-time systems, and cloud-ready
-              platforms.
-            </motion.p>
-
-            <motion.div
-              className="hero__meta-row"
-              suppressHydrationWarning
-              initial={{ opacity: 0, y: reduce ? 0 : 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, ease: EASE, delay: 0.85 }}
-            >
-              <Magnetic>
-                <LinkArrow href="/#contact" label="Let's Talk" dataOdId="hero-cta" />
-              </Magnetic>
-              <span className="hero__meta text-muted">
-                Tunis, Tunisia · Open to opportunities
-              </span>
-            </motion.div>
-          </motion.div>
-
+        <motion.div
+          className="hero__portrait-wrap"
+          suppressHydrationWarning
+          style={{ y: yImg }}
+          initial={{ opacity: 0, rotateY: reduce ? 0 : 14, rotateX: reduce ? 0 : 10, y: reduce ? 0 : 44, scale: 0.94 }}
+          animate={{ opacity: 1, rotateY: 0, rotateX: 0, y: 0, scale: 1 }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.4 }}
+        >
           <motion.div
-            className="hero__portrait-wrap"
+            className="hero__portrait"
+            data-od-id="hero-portrait"
             suppressHydrationWarning
-            style={{ y: yImg }}
-            initial={{ opacity: 0, rotateY: reduce ? 0 : 14, rotateX: reduce ? 0 : 10, y: reduce ? 0 : 44, scale: 0.94 }}
-            animate={{ opacity: 1, rotateY: 0, rotateX: 0, y: 0, scale: 1 }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.4 }}
+            style={{ rotateY: tiltY }}
           >
+            {/* headline badge */}
             <motion.div
-              className="hero__portrait"
-              data-od-id="hero-portrait"
+              className="hero__accent"
               suppressHydrationWarning
-              style={{ rotateY: tiltY }}
+              aria-hidden="true"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 220, damping: 16, delay: 0.85 }}
+            />
+            <motion.div
+              className="hero__headline"
+              suppressHydrationWarning
+              aria-hidden="true"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 1.05 }}
             >
-              {/* headline badge */}
-              <motion.div
-                className="hero__accent"
-                suppressHydrationWarning
-                aria-hidden="true"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 220, damping: 16, delay: 0.85 }}
-              />
-              <motion.div
-                className="hero__headline"
-                suppressHydrationWarning
-                aria-hidden="true"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: EASE, delay: 1.05 }}
-              >
-                Full-stack · React · Spring Boot
-              </motion.div>
+              Full-stack · React · Spring Boot
+            </motion.div>
 
-              <motion.div
-                className="hero__visor"
-                data-od-id="hero-portrait-looks"
-                suppressHydrationWarning
-                style={{ x: visorX, y: visorY }}
-              >
-                {LOOK_ORDER.map((k) => {
-                  const op = k === "left" ? leftOp : k === "right" ? rightOp : midOp;
-                  return (
-                    <motion.img
-                      key={k}
-                      src={heroPortraitTrio[k]}
-                      alt={k === "middle" ? "Portrait of Bahaa Eddine Bouzid" : ""}
-                      width={852}
-                      height={1102}
-                      aria-hidden={k !== "middle"}
-                      suppressHydrationWarning
-                      className={`hero__portrait-img hero__portrait-img--${k}`}
-                      style={{ opacity: op }}
-                    />
-                  );
-                })}
-              </motion.div>
+            <motion.div
+              className="hero__visor"
+              data-od-id="hero-portrait-looks"
+              suppressHydrationWarning
+              style={{ x: visorX, y: visorY }}
+            >
+              {LOOK_ORDER.map((k) => {
+                const op = k === "left" ? leftOp : k === "right" ? rightOp : midOp;
+                return (
+                  <motion.img
+                    key={k}
+                    src={heroPortraitTrio[k]}
+                    alt={k === "middle" ? "Portrait of Bahaa Eddine Bouzid" : ""}
+                    width={852}
+                    height={1102}
+                    aria-hidden={k !== "middle"}
+                    suppressHydrationWarning
+                    className={`hero__portrait-img hero__portrait-img--${k}`}
+                    style={{ opacity: op }}
+                  />
+                );
+              })}
             </motion.div>
           </motion.div>
-        </div>
+        </motion.div>
       </div>
 
       <div className="hero__trail" aria-hidden="true">
@@ -271,10 +240,23 @@ export function Hero() {
           <motion.div
             key={t.id}
             className="hero__trail-item"
-            style={{ left: t.x, top: t.y }}
-            initial={{ opacity: 0.9, scale: t.scale, rotate: t.rot, y: 0 }}
-            animate={{ opacity: 0, scale: t.scale * 0.55, rotate: t.rot - 12, y: 34 }}
-            transition={{ duration: 0.8, ease: EASE }}
+            style={{
+              left: t.x,
+              top: t.y,
+              width: t.size,
+              height: t.size,
+              marginLeft: -t.size / 2,
+              marginTop: -t.size / 2,
+            }}
+            initial={{ opacity: 0, scale: t.scale * 0.5, x: 0, y: 0, rotate: t.rot }}
+            animate={{
+              opacity: [0, 0.92, 0.9, 0.8, 0],
+              scale: [t.scale * 0.5, t.scale, t.scale * 1.06, t.scale * 1.1, t.scale * 0.85],
+              x: [0, 46, 78, 34, 0],
+              y: [0, -34, -66, -98, -150],
+              rotate: [t.rot, t.rot + 10, t.rot + 4, t.rot - 6, t.rot - 2],
+            }}
+            transition={{ duration: 3.2, ease: EASE, times: [0, 0.12, 0.45, 0.8, 1] }}
             onAnimationComplete={() =>
               setTrail((prev) => prev.filter((p) => p.id !== t.id))
             }
@@ -295,24 +277,5 @@ export function Hero() {
         }}
       />
     </section>
-  );
-}
-
-function LinkArrow({
-  href,
-  label,
-  dataOdId,
-}: {
-  href: string;
-  label: string;
-  dataOdId?: string;
-}) {
-  return (
-    <a className="link" href={href} data-od-id={dataOdId}>
-      {label}
-      <span className="arr" aria-hidden="true">
-        ↗
-      </span>
-    </a>
   );
 }

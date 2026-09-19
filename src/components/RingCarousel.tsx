@@ -148,13 +148,7 @@ export function RingCarousel() {
               <img src={current.image} alt={current.imageAlt} width={1200} height={800} />
             </motion.span>
 
-            <motion.span
-              key={`meta-${current.slug}`}
-              className="ring__meta"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: EASE }}
-            >
+            <span className="ring__meta" aria-hidden="true">
               <span className="ring__count">
                 0{active + 1} / 0{N}
               </span>
@@ -168,7 +162,7 @@ export function RingCarousel() {
                   ↗
                 </span>
               </span>
-            </motion.span>
+            </span>
           </Link>
 
           <span className="ring__hint" aria-hidden="true">
