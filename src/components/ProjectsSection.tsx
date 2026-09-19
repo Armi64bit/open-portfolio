@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Project } from "@/lib/data";
-import { featuredProjects } from "@/lib/data";
 import { EASE, EASE_SPRING } from "@/lib/motion";
 import { Reveal } from "./Reveal";
 import { LensSection } from "./LensSection";
+import { RingCarousel } from "./RingCarousel";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
@@ -101,11 +101,7 @@ export function ProjectsSection() {
           </p>
         </Reveal>
 
-        <div className="pcard__grid">
-          {featuredProjects.map((p, i) => (
-            <ProjectCard key={p.slug} project={p} index={i} />
-          ))}
-        </div>
+        <RingCarousel />
       </div>
     </LensSection>
   );
