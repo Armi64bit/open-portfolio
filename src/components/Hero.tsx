@@ -11,7 +11,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { projects, heroPortraitTrio } from "@/lib/data";
 import { EASE } from "@/lib/motion";
-import { Scene3D } from "@/components/Scene3D";
+// import { Scene3D } from "@/components/Scene3D";
 
 type Look = keyof typeof heroPortraitTrio;
 
