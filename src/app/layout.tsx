@@ -11,6 +11,7 @@ const description =
   "Portfolio of Bahaa Eddine Bouzid: a full-stack engineer in Tunis building dependable web products, real-time systems, and cloud-ready platforms with React, TypeScript, and Spring Boot.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bahaaeddine-dev.vercel.app"),
   title: {
     default: title,
     template: "%s — Bahaa Eddine Bouzid",
