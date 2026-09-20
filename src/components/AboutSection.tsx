@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
-import { aboutPortrait, blogUrl, services, tools } from "@/lib/data";
+import { aboutPortrait, blogUrl, services, stackGroups } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Magnetic } from "./Magnetic";
 import { DiCss3, DiJava } from "react-icons/di";
@@ -166,29 +166,29 @@ export function AboutSection() {
             <span className="kicker">Tools &amp; Languages</span>
           </Reveal>
           <Reveal delay={0.06}>
-            <div className="marquee">
-              <div className="marquee__track">
-                {[...tools, ...tools].map((t, i) => {
-                  const Icon = TOOL_ICONS[t.icon];
-                  return (
-                    <div
-                      className="tools__chip"
-                      key={i}
-                      aria-hidden={i >= tools.length}
-                      title={t.label}
-                    >
-                      <span
-                        className="tools__ic"
-                        style={{ color: t.color }}
-                        aria-hidden="true"
-                      >
-                        {Icon ? <Icon size={20} /> : null}
-                      </span>
-                      <span className="tools__label">{t.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="tools__stack">
+              {stackGroups.map((g) => (
+                <div className="tools__line" key={g.label}>
+                  <span className="tools__group">{g.label}</span>
+                  <div className="tools__chips">
+                    {g.items.map((t) => {
+                      const Icon = TOOL_ICONS[t.icon];
+                      return (
+                        <div className="tools__chip" key={t.label} title={t.label}>
+                          <span
+                            className="tools__ic"
+                            style={{ color: t.color }}
+                            aria-hidden="true"
+                          >
+                            {Icon ? <Icon size={16} /> : null}
+                          </span>
+                          <span className="tools__label">{t.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </Reveal>
         </div>

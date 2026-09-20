@@ -362,6 +362,74 @@ export const tools: Tool[] = [
   { label: "Jest", icon: "jest", color: "#c21325" },
   { label: "JUnit", icon: "junit", color: "#25a162" },
   { label: "Gemini", icon: "gemini", color: "#8e75b2" },
+  { label: "Optuna", icon: "optuna", color: "#3b1f6e" },
+  { label: "OpenRouter", icon: "openrouter", color: "#7c3aed" },
+];
+
+export type StackGroup = {
+  label: string;
+  items: Tool[];
+};
+
+const stackByLabel = (labels: string[]): Tool[] =>
+  labels
+    .map((label) => tools.find((t) => t.label === label))
+    .filter((t): t is Tool => Boolean(t));
+
+export const stackGroups: StackGroup[] = [
+  {
+    label: "Frontend",
+    items: stackByLabel([
+      "React",
+      "Angular",
+      "TypeScript",
+      "JavaScript",
+      "HTML5",
+      "CSS3",
+      "Tailwind CSS",
+      "Flutter",
+    ]),
+  },
+  {
+    label: "Backend",
+    items: stackByLabel([
+      "Java",
+      "C++",
+      "Python",
+      "Spring Boot",
+      "Node.js",
+      "NestJS",
+      "FastAPI",
+      "Django",
+      "Laravel",
+      "Symfony",
+    ]),
+  },
+  {
+    label: "Database",
+    items: stackByLabel(["MongoDB", "MySQL"]),
+  },
+  {
+    label: "Tools & DevOps",
+    items: stackByLabel([
+      "Docker",
+      "Jenkins",
+      "Git",
+      "GitHub Actions",
+      "Maven",
+      "Prometheus",
+      "Grafana",
+      "Firebase",
+    ]),
+  },
+  {
+    label: "Testing",
+    items: stackByLabel(["Jest", "JUnit"]),
+  },
+  {
+    label: "AI / ML",
+    items: stackByLabel(["Gemini", "Optuna", "OpenRouter"]),
+  },
 ];
 
 export const heroPortrait =
