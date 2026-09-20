@@ -442,6 +442,6 @@ export const heroPortraitTrio = {
 };
 
 export const aboutPortrait =
-  "/images/framerusercontent.com/9VzqeInK4U8O75RntX2C3nj4Da4-bb064258fe.jpg";
+  "/images/images/hero-look-left.jpg";
 
 export const blogUrl = "https://armi64bit.github.io/own-blog/";
