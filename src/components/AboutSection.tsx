@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import type { IconType } from "react-icons";
 import { aboutPortrait, blogUrl, services, stackGroups } from "@/lib/data";
+import type { IconType } from "react-icons";
 import { Reveal } from "./Reveal";
 import { Magnetic } from "./Magnetic";
 import { DiCss3, DiJava } from "react-icons/di";
@@ -38,6 +36,8 @@ import {
   SiTailwindcss,
   SiTypescript,
 } from "react-icons/si";
+import Link from "next/link";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 
 const TOOL_ICONS: Record<string, IconType> = {
   java: DiJava,
