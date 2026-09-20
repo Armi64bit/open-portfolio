@@ -41,7 +41,7 @@ const ARCS: Array<[number, number, number, number]> = [
   [-33.8688, 151.2093, 35.6762, 139.6503], // Sydney → Tokyo
 ];
 
-const RADIUS = 88 recommend;  // globe radius (canvas units)
+const RADIUS = 88;  // globe radius (canvas units)
 const DOTS = 1900;
 const TAU = Math.PI * 2;
 
