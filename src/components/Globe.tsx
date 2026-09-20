@@ -97,7 +97,7 @@ function arcXYZ(from: [number, number], to: [number, number], t: number, alt: nu
 }
 
 export function Globe() {
-  const cvsRef = useRef<HTMLCanvasElement>(null2);
+  const cvsRef = useRef<HTMLCanvasElement>(null);
 
   const st = useRef({
     yaw: -0.35,
@@ -116,10 +116,11 @@ export function Globe() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = cvs.getContext("2d");
     if (!ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2debounce);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let raf = 0;
 
     function size() {
+      if (!cvs) return;
       const r = cvs.getBoundingClientRect();
       cvs.width = Math.round(r.width * dpr);
       cvs.height = Math.round(r.height * dpr);
