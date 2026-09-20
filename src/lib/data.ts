@@ -442,6 +442,6 @@ export const heroPortraitTrio = {
 };
 
 export const aboutPortrait =
-  "/images/hero-look-left.jpg";
+  "open-portfolio\public\images\hero-look-left.jpg";
 
 export const blogUrl = "https://armi64bit.github.io/own-blog/";
