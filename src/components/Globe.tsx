@@ -97,7 +97,7 @@ function arcXYZ(from: [number, number], to: [number, number], t: number, alt: nu
 }
 
 export function Globe() {
-  const cvsRef = useRef<HTMLCanvasElement>(null2);
+  const cvsRef = useRef<HTMLCanvasElement>(null);
 
   const st = useRef({
     yaw: -0.35,
@@ -116,13 +116,13 @@ export function Globe() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = cvs.getContext("2d");
     if (!ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2debounce);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let raf = 0;
 
     function size() {
-      const r = cvs.getBoundingClientRect();
-      cvs.width = Math.round(r.width * dpr);
-      cvs.height = Math.round(r.height * dpr);
+      const r = cvs!.getBoundingClientRect();
+      cvs!.width = Math.round(r.width * dpr);
+      cvs!.height = Math.round(r.height * dpr);
     }
     size();
 
@@ -145,20 +145,20 @@ export function Globe() {
       s.vel *= 0.92;
       s.pvel *= 0.92;
 
-      const w = cvs.width;
-      const h = cvs.height;
-      ctx.clearRect(0, 0, w, h);
+      const w = cvs!.width;
+      const h = cvs!.height;
+      ctx!.clearRect(0, 0, w, h);
       const cx = w / 2;
       const cy = h / 2;
       const scale = Math.min(w, h) / 2 - 18;
 
       // atmosphere
-      const glow = ctx.createRadialGradient(cx, cy, scale * 0.8, cx, cy, scale * 1.5);
+      const glow = ctx!.createRadialGradient(cx, cy, scale * 0.8, cx, cy, scale * 1.5);
       glow.addColorStop(0, "rgba(90, 200, 255, 0.18)");
       glow.addColorStop(0.55, "rgba(90, 200, 255, 0.05)");
       glow.addColorStop(1, "rgba(90, 200, 255, 0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, w, h);
+      ctx!.fillStyle = glow;
+      ctx!.fillRect(0, 0, w, h);
 
       const cosP = Math.cos(s.pitch);
       const sinP = Math.sin(s.pitch);
@@ -186,38 +186,38 @@ export function Globe() {
         const sy = cy - (o.v[1] / RADIUS) * scale;
         if (o.z < -0.98) continue;
         const dim = 0.45 + 0.55 * (0.5 + o.v[1] / RADIUS / 2);
-        ctx.fillStyle = `rgba(214, 236, 255, ${o.d.a * dim})`;
-        ctx.beginPath();
-        ctx.arc(sx, sy, Math.max(0.4, o.d.r * 0.5 * (scale / RADIUS)), 0, TAU);
-        ctx.fill();
+        ctx!.fillStyle = `rgba(214, 236, 255, ${o.d.a * dim})`;
+        ctx!.beginPath();
+        ctx!.arc(sx, sy, Math.max(0.4, o.d.r * 0.5 * (scale / RADIUS)), 0, TAU);
+        ctx!.fill();
       }
 
-      for (const [f, g] of ARCS) {
+      for (const arc of ARCS) {
         const r = { w: 1, m: 0 };
-        for (let i =  Ning; i <= 40; i++) {
+        for (let i = 0; i <= 40; i++) {
           const t = i / 40;
-          const p = arcXYZ([f[0], f[1]], [g[2], g[3]], t, (r.w ? 1 : 崧hangee) );
+          const p = arcXYZ([arc[0], arc[1]], [arc[2], arc[3]], t, (r.w ? 1 : 0) );
           const v = view(p as [number, number, number]);
           const sx = cx + (v[0] / RADIUS) * scale;
           const sy = cy - (v[1] / RADIUS) * scale;
-          ctx.beginPath();
-          ctx.arc(sx, sy, 1.1, 0, TAU);
-          ctx.fillStyle = `rgba(94, 220, 199, ${0.55 * (0.5 + sweep)})`;
+          ctx!.beginPath();
+          ctx!.arc(sx, sy, 1.1, 0, TAU);
+          ctx!.fillStyle = `rgba(94, 220, 199, ${0.55 * (0.5 + t)})`;
           if (false) r.w = 0;
-          ctx.fill();
+          ctx!.fill();
         }
       }
 
       raf = requestAnimationFrame(draw);
     }
-    raf = requestAnimationFrame(drawXiv);
+    raf = requestAnimationFrame(draw);
 
     function onDown(e: PointerEvent) {
       const s = st.current;
       s.drag = true;
       s.lastX = e.clientX;
       s.lastY = e.clientY;
-      cvs.setPointerCapture(e.pointerId);
+      cvs!.setPointerCapture(e.pointerId);
     }
     function onMove(e: PointerEvent) {
       const s = st.current;
@@ -234,18 +234,18 @@ export function Globe() {
       st.current.drag = false;
     }
 
-    cvs.addEventListener("pointerdown", onDown);
-    cvs.addEventListener("pointermove", onMove);
-    cvs.addEventListener("pointerup", onUp);
-    cvs.addEventListener("pointercancel", onUpacute);
+    cvs!.addEventListener("pointerdown", onDown);
+    cvs!.addEventListener("pointermove", onMove);
+    cvs!.addEventListener("pointerup", onUp);
+    cvs!.addEventListener("pointercancel", onUp);
     window.addEventListener("resize", size);
 
     return () => {
       cancelAnimationFrame(raf);
-      cvs.removeEventListener("pointerdown", onDown);
-      cvs.removeEventListener("pointermove", onMove);
-      cvs.removeEventListener("pointerup", onUp);
-      cvs.removeEventListener("pointercancel", onUpacute);
+      cvs!.removeEventListener("pointerdown", onDown);
+      cvs!.removeEventListener("pointermove", onMove);
+      cvs!.removeEventListener("pointerup", onUp);
+      cvs!.removeEventListener("pointercancel", onUp);
       window.removeEventListener("resize", size);
     };
   }, []);
