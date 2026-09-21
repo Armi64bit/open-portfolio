@@ -476,3 +476,105 @@ img {
     display: none;
   }
 }
+
+/* ===== Creative CTA — eye-grabbing hover ===== */
+.creative-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 1.5rem 0 2.25rem;
+  padding: 0.95rem 1.6rem;
+  border: 1px solid var(--line, rgba(120,130,150,0.28));
+  border-radius: 999px;
+  background:
+    var(--bg, var(--paper, transparent));
+  color: var(--ink, currentColor);
+  font-family: var(--font-ui, inherit);
+  overflow: hidden;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  isolation: isolate;
+  transition: border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+}
+.creative-cta::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background: conic-gradient(
+    from var(--gstart, 0deg),
+    transparent 0 40%,
+    rgba(255,255,255,0.85) 50%,
+    transparent 60% 100%
+  );
+  animation: crea-sweep 4.5s linear infinite;
+  opacity: 0.18;
+}
+.creative-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255,255,255,0.5) 50%,
+    transparent 70%
+  );
+  transform: translateX(-130%);
+}
+.creative-cta:hover::after {
+  animation: crea-shimmer 0.9s ease forwards;
+}
+.creative-cta:hover {
+  border-color: rgba(255,180,60,0.65);
+  box-shadow:
+    0 0 0 1px rgba(255,180,60,0.45),
+    0 8px 40px rgba(255,150,40,0.35),
+    0 0 80px rgba(255,120,0,0.25);
+  color: var(--accent, currentColor);
+  transform: translateY(-2px);
+}
+.creative-cta__arr,
+.creative-cta__icon {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.creative-cta:hover .creative-cta__arr,
+.creative-cta:hover > .creative-cta__inner::after,
+.creative-cta:hover .creative-cta__icon {
+  transform: translate(3px, -3px) scale(1.15);
+}
+@keyframes crea-sweep {
+  to { --gstart: 360deg; }
+}
+@keyframes crea-shimmer {
+  0%   { transform: translateX(-130%); }
+  60%  { transform: translateX(130%); }
+  100% { transform: translateX(130%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .creative-cta::before,
+  .creative-cta::after {
+    animation: none;
+    display: none;
+  }
+  .creative-cta:hover { transform: none; }
+}
+
+[data-od-id="creative-cta"]{position:relative;display:inline-flex;align-items:center;gap:.9rem;padding:.95rem 1.6rem;border:1px solid rgba(120,130,150,.28);border-radius:999px;overflow:hidden;isolation:isolate;text-decoration:none;color:inherit;cursor:pointer;transition:border-color .4s ease,color .4s ease,box-shadow .4s ease,transform .4s ease}
+[data-od-id="creative-cta"]::before{content:"";position:absolute;inset:-40%;z-index:-1;background:conic-gradient(from var(--gstart,0deg),transparent 0 40%,rgba(255,255,255,.85) 50%,transparent 60% 100%);animation:crea-sweep-step 5s linear infinite;opacity:.18;pointer-events:none}
+[data-od-id="creative-cta"]::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(120deg,transparent 25%,rgba(255,255,255,.55) 50%,transparent 75%);transform:translateX(-130%);opacity:.75;pointer-events:none}
+[data-od-id="creative-cta"]:hover{transform:translateY(-2px);border-color:rgba(255,180,60,.65);box-shadow:0 0 0 1px rgba(255,180,60,.45),0 8px 40px rgba(255,150,40,.35),0 0 80px rgba(255,120,0,.25)}
+[data-od-id="creative-cta"]:hover::after{animation:crea-shimmer .9s ease forwards}
+@keyframes crea-sweep-step{to{--gstart:360deg}}
+@keyframes crea-shimmer{0%{transform:translateX(-130%)}60%,100%{transform:translateX(130%)}}
+
+
+/* CreativeVideo hover-unmute wrap */
+.cvwrap{position:relative;height:100%;cursor:pointer}
+.cvwrap__video{display:block;width:100%;height:100%;object-fit:cover}
+.cvwrap__badge{position:absolute;left:0.75rem;bottom:0.75rem;z-index:2;padding:0.3rem 0.65rem;border-radius:999px;background:rgba(10,12,16,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.14);font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease;pointer-events:none}
+.cvwrap:hover .cvwrap__badge{opacity:1;transform:translateY(0)}
+.cvwrap:hover .cvwrap__media{box-shadow:0 0 0 1px rgba(0,0,0,0.05)}

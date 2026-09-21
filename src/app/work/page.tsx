@@ -26,6 +26,35 @@ export default function WorkPage() {
           </p>
         </Reveal>
 
+        <Reveal delay={0.12}>
+          <Link
+            href="/work/creative"
+            className="crea-cta"
+            data-od-id="creative-cta"
+          >
+            <span className="crea-cta__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M7 17 17 7M17 7v8m0-8H9"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+            <span className="crea-cta__body">
+              <span className="crea-cta__kicker">Live · frame-locked</span>
+              <span className="crea-cta__title">
+                Creative
+                <span className="crea-cta__arr" aria-hidden="true">
+                  ↗
+                </span>
+              </span>
+            </span>
+          </Link>
+        </Reveal>
+
         <ul className="work__list" data-od-id="work-list">
           {projects.map((p, i) => (
             <Reveal key={p.slug} delay={Math.min(i * 0.04, 0.2)}>
