@@ -10,10 +10,57 @@ export type Project = {
   image: string;
   imageAlt: string;
   imageRatio: string;
+  imageFit?: "cover" | "contain";
   featured: boolean;
+  gallery?: { src: string; alt: string }[];
+  videoUrl?: string;
+  repoUrl?: string;
 };
 
 export const projects: Project[] = [
+  {
+    slug: "tunisia-jobs",
+    title: "Tunisia Jobs",
+    category: "Full-stack Engineering",
+    year: "2026",
+    blurb:
+      "A full-stack job-market intelligence platform for collecting, analysing, and matching Tunisian opportunities.",
+    description: "",
+    highlights: [
+      "Built an end-to-end intelligence workflow around job collection from Tunisian sources",
+      "Added skill, salary, and monthly trend analysis with Power BI-ready exports",
+      "Implemented CV matching, ranked opportunities, missing-skill analysis, and recommendations",
+      "Connected a Next.js dashboard to a FastAPI backend and PostgreSQL data layer",
+      "Added pipeline controls, live progress, scrape history, applications, and AI-assisted cover letters",
+    ],
+    stack: ["Next.js", "FastAPI", "PostgreSQL", "Python", "OpenRouter", "Power BI"],
+    image: "/TunisiaJobs/overview1.png",
+    imageAlt: "Tunisia Jobs market intelligence platform",
+    imageRatio: "16 / 9",
+    imageFit: "contain",
+    featured: true,
+    gallery: [
+      ...[
+        "overview1.png",
+        "overview2.png",
+        "cvmatch1.png",
+        "cvmatch2.png",
+        "cvmatch3.png",
+        "cvmatch4.png",
+        "joboffer1.png",
+        "joboffer2.png",
+        "scraperun1.png",
+        "scraperun2.png",
+        "scraperun3.png",
+      ].map((file) => ({
+        src: `/TunisiaJobs/${file}`,
+        alt: `Tunisia Jobs ${file.replace(".png", "").replace(/[0-9]/g, "")}`,
+      })),
+    ],
+    videoUrl:
+      "/TunisiaJobs/Recording%20Sep%2023%2C%202026%20-%2010_43%E2%80%AFPM.mp4",
+    repoUrl: "https://github.com/Armi64bit/tunisia-jobs",
+  },
   {
     slug: "lilac-aitrader",
     title: "Lilac-AiTrader",

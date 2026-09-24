@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProject, projects } from "@/lib/data";
 import { ProjectHeroImage } from "@/components/ProjectsSection";
+import { ProjectMedia } from "@/components/ProjectMedia";
 import { Reveal } from "@/components/Reveal";
 
 export function generateStaticParams() {
@@ -62,6 +63,8 @@ export default async function WorkDetailPage({
         <Reveal delay={0.1}>
           <ProjectHeroImage project={project} priority />
         </Reveal>
+
+        <ProjectMedia project={project} />
 
         <div className="wd__body">
           <div>

@@ -91,7 +91,7 @@ export function ProjectsSection() {
 
         <Reveal delay={0.05}>
           <p className="section__lead">
-            Six hands-on projects spanning AI trading, product engineering,
+            Seven hands-on projects spanning AI trading, product engineering,
             automation, and community platforms.
           </p>
         </Reveal>
@@ -111,9 +111,12 @@ export function ProjectHeroImage({
 }) {
   return (
     <motion.div
-      className="phero"
+      className={`phero${project.imageFit === "contain" ? " phero--contain" : ""}`}
       suppressHydrationWarning
-      style={{ aspectRatio: project.imageRatio, perspective: 1000 }}
+      style={{
+        ...(project.imageFit === "contain" ? {} : { aspectRatio: project.imageRatio }),
+        perspective: 1000,
+      }}
       initial={{ opacity: 0, scale: 0.96, y: 28, rotateX: 4 }}
       animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
       transition={{ duration: 0.95, ease: EASE }}
