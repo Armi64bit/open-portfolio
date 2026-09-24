@@ -1209,6 +1209,14 @@
   list-style: none;
 }
 
+.wd__story {
+  max-width: 68ch;
+  margin: -4px 0 28px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
 .wd__highlights li {
   display: flex;
   gap: 14px;
@@ -1240,6 +1248,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.wd__links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.wd__links-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
 .wd__nav {

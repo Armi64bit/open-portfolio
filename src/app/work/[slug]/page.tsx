@@ -69,6 +69,7 @@ export default async function WorkDetailPage({
         <div className="wd__body">
           <div>
             <h2 className="wd__h2 display">Overview</h2>
+            {project.description ? <p className="wd__story">{project.description}</p> : null}
             <ul className="wd__highlights">
               {project.highlights.map((h, i) => (
                 <Reveal key={i} delay={i * 0.04} as="li">
@@ -98,6 +99,21 @@ export default async function WorkDetailPage({
                 ↗
               </span>
             </Link>
+            {project.repoUrl || project.originUrl ? (
+              <div className="wd__links">
+                <span className="wd__links-label text-muted">Project links</span>
+                {project.repoUrl ? (
+                  <a href={project.repoUrl} target="_blank" rel="noreferrer" className="link">
+                    Current repository <span className="arr" aria-hidden="true">↗</span>
+                  </a>
+                ) : null}
+                {project.originUrl ? (
+                  <a href={project.originUrl} target="_blank" rel="noreferrer" className="link">
+                    Original fork <span className="arr" aria-hidden="true">↗</span>
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
           </aside>
         </div>
 

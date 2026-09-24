@@ -15,6 +15,7 @@ export type Project = {
   gallery?: { src: string; alt: string }[];
   videoUrl?: string;
   repoUrl?: string;
+  originUrl?: string;
 };
 
 export const projects: Project[] = [
@@ -24,16 +25,26 @@ export const projects: Project[] = [
     category: "Full-stack Engineering",
     year: "2026",
     blurb:
-      "A full-stack job-market intelligence platform for collecting, analysing, and matching Tunisian opportunities.",
-    description: "",
+      "From a job scraper to a full-stack career intelligence platform for Tunisia.",
+    description:
+      "What began as a fork of Chiraz Kitar's original data pipeline grew into a full-stack, AI-powered job market and candidate intelligence platform tailored for Tunisia. The project brings collection, market analytics, CV matching, applications, and candidate support into one web-based ecosystem.",
     highlights: [
-      "Built an end-to-end intelligence workflow around job collection from Tunisian sources",
-      "Added skill, salary, and monthly trend analysis with Power BI-ready exports",
-      "Implemented CV matching, ranked opportunities, missing-skill analysis, and recommendations",
-      "Connected a Next.js dashboard to a FastAPI backend and PostgreSQL data layer",
-      "Added pipeline controls, live progress, scrape history, applications, and AI-assisted cover letters",
+      "Built a responsive Next.js dashboard with a FastAPI control center for running and monitoring scraping pipelines live",
+      "Added CV-to-job matching with PDF/TXT skill extraction, match scores, ranked opportunities, and covered versus missing skills",
+      "Integrated OpenRouter models to generate personalized cover letters for matched positions",
+      "Added application tracking, employer reply monitoring, and saved scrape-run snapshots",
+      "Expanded collection across KeeJob, EmploiTunisie, ReKrute, LinkedIn, and Apify",
+      "Automated Power BI-ready exports for skill trends, salary benchmarks, contract distributions, and location mapping",
     ],
-    stack: ["Next.js", "FastAPI", "PostgreSQL", "Python", "OpenRouter", "Power BI"],
+    stack: [
+      "Next.js",
+      "FastAPI",
+      "Python",
+      "PostgreSQL",
+      "Selenium",
+      "OpenRouter AI",
+      "Power BI",
+    ],
     image: "/TunisiaJobs/overview1.png",
     imageAlt: "Tunisia Jobs market intelligence platform",
     imageRatio: "16 / 9",
@@ -60,6 +71,7 @@ export const projects: Project[] = [
     videoUrl:
       "/TunisiaJobs/Recording%20Sep%2023%2C%202026%20-%2010_43%E2%80%AFPM.mp4",
     repoUrl: "https://github.com/Armi64bit/tunisia-jobs",
+    originUrl: "https://github.com/chirazkitar/tunisia-jobs",
   },
   {
     slug: "lilac-aitrader",
